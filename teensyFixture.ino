@@ -59,7 +59,7 @@ EthernetUDP Udp;
 // #define LEDS_PER_UNIVERSE 170
 
 // 0-255
-#define BRIGHTNESS 20
+#define BRIGHTNESS 255
 
 // Define the array of leds
 CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];

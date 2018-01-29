@@ -21,13 +21,16 @@
 // minimum for debugging only.
 
 #include "Log.hpp"
+#include "Utils.hpp"
 
+// clang-format off
+#include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
-#include <SPI.h>
 #define USE_OCTOWS2811
-#include <FastLED.h>
 #include <OctoWS2811.h>
+#include <FastLED.h>
+// clang-format on
 
 // enter desired universe and subnet  (sACN first universe is 1)
 #define DMX_SUBNET 0

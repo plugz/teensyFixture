@@ -135,22 +135,19 @@ void sacnDMXReceived(unsigned char* pbuff, int count, int unicount) {
                 int ledNumber = (b - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
                 // sACN packets come in seperate RGB but we have to set each led's RGB value together
                 // this 'reads ahead' for all 3 colours before moving to the next led.
-                for (int i = 126;i < 126+count;i = i + 3){
+                for (int i = 126; i < 126+count && ledNumber < ARRAY_COUNT(leds);i = i + 3){
                     byte charValueR = pbuff[i];
                     byte charValueG = pbuff[i+1];
                     byte charValueB = pbuff[i+2];
-                    if (ledNumber < (sizeof(leds)/sizeof(*leds)))
-                    {
-                        leds[ledNumber] = CRGB(charValueR,charValueG,charValueB);
-                        LOG_DEBUG(ledNumber, DEC);
-                        LOG_DEBUG(": ");
-                        LOG_DEBUG(charValueR);
-                        LOG_DEBUG(", ");
-                        LOG_DEBUG(charValueG);
-                        LOG_DEBUG(", ");
-                        LOG_DEBUG(charValueB);
-                        LOGLN_DEBUG();
-                    }
+                    leds[ledNumber] = CRGB(charValueR,charValueG,charValueB);
+                    LOG_DEBUG(ledNumber, DEC);
+                    LOG_DEBUG(": ");
+                    LOG_DEBUG(charValueR);
+                    LOG_DEBUG(", ");
+                    LOG_DEBUG(charValueG);
+                    LOG_DEBUG(", ");
+                    LOG_DEBUG(charValueB);
+                    LOGLN_DEBUG();
                     ledNumber++;
                 }
 

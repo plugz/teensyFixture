@@ -130,23 +130,25 @@ void sacnDMXReceived(unsigned char *pbuff, int count, int unicount) {
             if (pbuff[125] == 0) // start code must be 0
             {
                 LOGLN_DEBUG("startCode OK");
-                int ledNumber = (b - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
-                // sACN packets come in seperate RGB but we have to set each led's RGB value
-                // together this 'reads ahead' for all 3 colours before moving to the next led.
-                for (int i = 126; i < 126 + count && ledNumber < ARRAY_COUNT(leds); i = i + 3) {
-                    byte charValueR = pbuff[i];
-                    byte charValueG = pbuff[i + 1];
-                    byte charValueB = pbuff[i + 2];
-                    leds[ledNumber] = CRGB(charValueR, charValueG, charValueB);
+                unsigned int ledNumber = (b - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+                int valueR = pbuff[0];
+                int valueG = pbuff[1];
+                int valueB = pbuff[2];
+                for (int i = 126 + 3; (i < 126 + 3 + count) && (ledNumber < ARRAY_COUNT(leds));
+                     ++i && ++ledNumber) {
+                    int brightness = pbuff[i];
+                    leds[ledNumber] = CRGB((valueR * brightness) / 255,
+                            (valueG * brightness) / 255,
+                                           (valueB * brightness) / 255);
+                    LOG_DEBUG("Led ", DEC);
                     LOG_DEBUG(ledNumber, DEC);
                     LOG_DEBUG(": ");
-                    LOG_DEBUG(charValueR);
+                    LOG_DEBUG((valueR * brightness) / 255, DEC);
                     LOG_DEBUG(", ");
-                    LOG_DEBUG(charValueG);
+                    LOG_DEBUG((valueG * brightness) / 255, DEC);
                     LOG_DEBUG(", ");
-                    LOG_DEBUG(charValueB);
+                    LOG_DEBUG((valueB * brightness) / 255, DEC);
                     LOGLN_DEBUG();
-                    ledNumber++;
                 }
 
                 LOGLN_DEBUG(unicount);

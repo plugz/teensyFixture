@@ -9,40 +9,45 @@
 #define LOGLEVEL_VERBOSE 5
 
 #ifndef LOGLEVEL
-# define LOGLEVEL LOGLEVEL_NONE
+#define LOGLEVEL LOGLEVEL_NONE
 #endif
 
 #if (LOGLEVEL > 0)
 
 #include <HardwareSerial.h>
 
-#define LOG(LVL, ...) do { \
-    if (LOGLEVEL >= LVL) { \
-        Serial.print(__VA_ARGS__); \
-    } \
-} while (0);
+#define LOG(LVL, ...)                                                                              \
+    do {                                                                                           \
+        if (LOGLEVEL >= LVL) {                                                                     \
+            Serial.print(__VA_ARGS__);                                                             \
+        }                                                                                          \
+    } while (0);
 
-#define LOGLN(LVL, ...) do { \
-    if (LOGLEVEL >= LVL) { \
-        Serial.println(__VA_ARGS__); \
-    } \
-} while (0);
+#define LOGLN(LVL, ...)                                                                            \
+    do {                                                                                           \
+        if (LOGLEVEL >= LVL) {                                                                     \
+            Serial.println(__VA_ARGS__);                                                           \
+        }                                                                                          \
+    } while (0);
 
-#define LOGSETUP() do { \
-    Serial.begin(115200); \
-} while (0);
-
+#define LOGSETUP()                                                                                 \
+    do {                                                                                           \
+        Serial.begin(115200);                                                                      \
+    } while (0);
 
 #else
 
-#define LOG(...) do { \
-} while (0);
+#define LOG(...)                                                                                   \
+    do {                                                                                           \
+    } while (0);
 
-#define LOGLN(...) do { \
-} while (0);
+#define LOGLN(...)                                                                                 \
+    do {                                                                                           \
+    } while (0);
 
-#define LOGSETUP(...) do { \
-} while (0);
+#define LOGSETUP(...)                                                                              \
+    do {                                                                                           \
+    } while (0);
 
 #endif
 
@@ -57,7 +62,5 @@
 #define LOGLN_INFO(...) LOGLN(LOGLEVEL_INFO, __VA_ARGS__)
 #define LOGLN_DEBUG(...) LOGLN(LOGLEVEL_DEBUG, __VA_ARGS__)
 #define LOGLN_VERBOSE(...) LOGLN(LOGLEVEL_VERBOSE, __VA_ARGS__)
-
-
 
 #endif

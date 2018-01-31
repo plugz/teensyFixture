@@ -39,12 +39,13 @@
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
 // IP address of ethernet shield
-IPAddress ip(192, 168, 2, 2);
+static const IPAddress ip(192, 168, 2, 2);
 #define SACN_PORT 5568
 // Multicast IP. Last 2 bytes are supposed to be the SACN Universe.
-IPAddress multicastIP(239, 255, 0, 1);
-EthernetUDP Udp;
+static const IPAddress multicastIP(239, 255, 0, 1);
+static EthernetUDP Udp;
 #define ETHERNET_BUFFER 636 // 540
+static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
 #define CHANNEL_COUNT 4800 // because it divides by 3 nicely
@@ -66,12 +67,12 @@ EthernetUDP Udp;
 #define BRIGHTNESS 255
 
 // Define the array of leds
-CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
+static CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
 
-unsigned char packetBuffer[ETHERNET_BUFFER];
-float fps = 0;
-unsigned long currentMillis = 0;
-unsigned long previousMillis = 0;
+// fps log
+static float fps = 0;
+static unsigned long currentMillis = 0;
+static unsigned long previousMillis = 0;
 
 bool receivedUniverses[UNIVERSE_COUNT] = {
     false,

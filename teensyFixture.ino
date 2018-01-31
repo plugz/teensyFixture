@@ -73,7 +73,9 @@ float fps = 0;
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
 
-bool receivedUniverses[UNIVERSE_COUNT] = {false,};
+bool receivedUniverses[UNIVERSE_COUNT] = {
+    false,
+};
 
 void flashLeds() {
     LEDS.showColor(CRGB(255, 0, 0)); // turn all pixels on red
@@ -116,7 +118,7 @@ void setup() {
     LOGLN_DEBUG(Ethernet.localIP());
 
     // unicast
-    //Udp.begin(SACN_PORT);
+    // Udp.begin(SACN_PORT);
     // multicast
     Udp.beginMulticast(multicastIP, SACN_PORT);
 
@@ -146,9 +148,8 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     }
 }
 
-void clearReceivedUniverses()
-{
-    for (auto& receivedUniverse : receivedUniverses)
+void clearReceivedUniverses() {
+    for (auto &receivedUniverse : receivedUniverses)
         receivedUniverse = false;
 }
 

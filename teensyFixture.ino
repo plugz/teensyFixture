@@ -65,10 +65,11 @@ EthernetUDP Udp;
 CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
 
 unsigned char packetBuffer[ETHERNET_BUFFER];
-int c = 0;
 float fps = 0;
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
+
+bool receivedUniverses[UNIVERSE_COUNT] = {false,};
 
 void flashLeds() {
     LEDS.showColor(CRGB(255, 0, 0)); // turn all pixels on red
@@ -137,7 +138,39 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     }
 }
 
-void sacnDMXReceived(unsigned char *pbuff, int count, int unicount) {
+void clearReceivedUniverses()
+{
+    for (auto& receivedUniverse : receivedUniverses)
+        receivedUniverse = false;
+}
+
+bool refreshLeds(unsigned int universe) {
+    // transform universe to index in receivedUniverse
+    universe = universe - DMX_UNIVERSE;
+
+    // A universe from the previous frame was probably lost.
+    // Display leds now, before updating data.
+    if (receivedUniverses[universe]) {
+        clearReceivedUniverses();
+        LEDS.show();
+        return false;
+    }
+
+    receivedUniverses[universe] = true;
+    for (auto receivedUniverse : receivedUniverses) {
+        // This frame is not complete, don't display it.
+        // Only refresh data.
+        if (!receivedUniverse)
+            return false;
+    }
+
+    // This frame is complete.
+    // Display leds after updating data.
+    clearReceivedUniverses();
+    return true;
+}
+
+void sacnDMXReceived(unsigned char *pbuff, int count) {
     if (count > CHANNEL_COUNT)
         count = CHANNEL_COUNT;
     byte b = pbuff[113]; // DMX Subnet
@@ -152,11 +185,10 @@ void sacnDMXReceived(unsigned char *pbuff, int count, int unicount) {
             if (pbuff[125] == 0) // start code must be 0
             {
                 LOGLN_DEBUG("startCode OK");
+                bool refresh = refreshLeds(b);
                 handleData(b, pbuff + 126, count);
-                LOGLN_DEBUG(unicount);
-                if (unicount == UNIVERSE_COUNT) {
+                if (refresh)
                     LEDS.show();
-                }
             }
         }
     }
@@ -181,9 +213,6 @@ int checkACNHeaders(unsigned char *messagein, int messagelength) {
 void loop() {
     // Process packets
     int packetSize = Udp.parsePacket(); // Read UDP packet count
-    if (c >= 10) {
-        c = 0;
-    }
     if (packetSize > 0) {
         LOGLN_DEBUG(packetSize);
         LOGLN_DEBUG("reading");
@@ -194,7 +223,6 @@ void loop() {
         if (count) {
             LOG_DEBUG("packet size first ");
             LOGLN_DEBUG(packetSize);
-            c = c + 1;
             // calculate framerate
             currentMillis = millis();
             if (currentMillis > previousMillis) {
@@ -205,7 +233,7 @@ void loop() {
             previousMillis = currentMillis;
             if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
                 LOGLN_DEBUG(fps);
-            sacnDMXReceived(packetBuffer, count, c); // process data function
+            sacnDMXReceived(packetBuffer, count); // process data function
         } else
             LOGLN_DEBUG("not sacn");
     }

@@ -38,7 +38,11 @@
 
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
-IPAddress ip(192, 168, 2, 2); // IP address of ethernet shield
+// IP address of ethernet shield
+IPAddress ip(192, 168, 2, 2);
+#define SACN_PORT 5568
+// Multicast IP. Last 2 bytes are supposed to be the SACN Universe.
+IPAddress multicastIP(239, 255, 0, 1);
 EthernetUDP Udp;
 #define ETHERNET_BUFFER 636 // 540
 
@@ -108,9 +112,13 @@ void setup() {
     //    LOG_DEBUG("ethernet status: ");
     //    LOGLN_DEBUG(status);
     //} while (status == 0);
-    Udp.begin(5568);
     LOG_DEBUG("IP: ");
     LOGLN_DEBUG(Ethernet.localIP());
+
+    // unicast
+    //Udp.begin(SACN_PORT);
+    // multicast
+    Udp.beginMulticast(multicastIP, SACN_PORT);
 
     // Once the Ethernet is initialised, run a test on the LEDs
     flashLeds();

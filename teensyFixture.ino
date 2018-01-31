@@ -115,6 +115,28 @@ void setup() {
     flashLeds();
 }
 
+void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
+    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+    int valueR = data[0];
+    int valueG = data[1];
+    int valueB = data[2];
+    for (unsigned int i = 126 + 3; (i < 126 + 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
+         ++i && ++ledNumber) {
+        int brightness = data[i];
+        leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
+                               (valueB * brightness) / 255);
+        LOG_DEBUG("Led ", DEC);
+        LOG_DEBUG(ledNumber, DEC);
+        LOG_DEBUG(": ");
+        LOG_DEBUG((valueR * brightness) / 255, DEC);
+        LOG_DEBUG(", ");
+        LOG_DEBUG((valueG * brightness) / 255, DEC);
+        LOG_DEBUG(", ");
+        LOG_DEBUG((valueB * brightness) / 255, DEC);
+        LOGLN_DEBUG();
+    }
+}
+
 void sacnDMXReceived(unsigned char *pbuff, int count, int unicount) {
     if (count > CHANNEL_COUNT)
         count = CHANNEL_COUNT;
@@ -130,27 +152,7 @@ void sacnDMXReceived(unsigned char *pbuff, int count, int unicount) {
             if (pbuff[125] == 0) // start code must be 0
             {
                 LOGLN_DEBUG("startCode OK");
-                unsigned int ledNumber = (b - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
-                int valueR = pbuff[0];
-                int valueG = pbuff[1];
-                int valueB = pbuff[2];
-                for (int i = 126 + 3; (i < 126 + 3 + count) && (ledNumber < ARRAY_COUNT(leds));
-                     ++i && ++ledNumber) {
-                    int brightness = pbuff[i];
-                    leds[ledNumber] = CRGB((valueR * brightness) / 255,
-                            (valueG * brightness) / 255,
-                                           (valueB * brightness) / 255);
-                    LOG_DEBUG("Led ", DEC);
-                    LOG_DEBUG(ledNumber, DEC);
-                    LOG_DEBUG(": ");
-                    LOG_DEBUG((valueR * brightness) / 255, DEC);
-                    LOG_DEBUG(", ");
-                    LOG_DEBUG((valueG * brightness) / 255, DEC);
-                    LOG_DEBUG(", ");
-                    LOG_DEBUG((valueB * brightness) / 255, DEC);
-                    LOGLN_DEBUG();
-                }
-
+                handleData(b, pbuff + 126, count);
                 LOGLN_DEBUG(unicount);
                 if (unicount == UNIVERSE_COUNT) {
                     LEDS.show();

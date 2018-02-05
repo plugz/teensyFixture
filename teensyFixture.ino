@@ -128,11 +128,12 @@ void setup() {
 }
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
-    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+    // first 3 bytes are RGB values
     int valueR = data[0];
     int valueG = data[1];
     int valueB = data[2];
-    for (unsigned int i = 126 + 3; (i < 126 + 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
+    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+    for (unsigned int i = 3; (i < 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
          ++i && ++ledNumber) {
         int brightness = data[i];
         leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,

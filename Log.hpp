@@ -14,7 +14,7 @@
 
 #if (LOGLEVEL > 0)
 
-#include <HardwareSerial.h>
+#include <Arduino.h>
 
 #define LOG(LVL, ...)                                                                              \
     do {                                                                                           \

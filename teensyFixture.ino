@@ -138,13 +138,25 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
         int brightness = data[i];
         leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
                                (valueB * brightness) / 255);
-        LOG_DEBUG("Led ", DEC);
+        LOG_DEBUG("Led ");
         LOG_DEBUG(ledNumber, DEC);
         LOG_DEBUG(": ");
+        LOG_VERBOSE(valueR, DEC);
+        LOG_VERBOSE(" * ");
+        LOG_VERBOSE(brightness, DEC);
+        LOG_VERBOSE(" = ");
         LOG_DEBUG((valueR * brightness) / 255, DEC);
         LOG_DEBUG(", ");
+        LOG_VERBOSE(valueG, DEC);
+        LOG_VERBOSE(" * ");
+        LOG_VERBOSE(brightness, DEC);
+        LOG_VERBOSE(" = ");
         LOG_DEBUG((valueG * brightness) / 255, DEC);
         LOG_DEBUG(", ");
+        LOG_VERBOSE(valueB, DEC);
+        LOG_VERBOSE(" * ");
+        LOG_VERBOSE(brightness, DEC);
+        LOG_VERBOSE(" = ");
         LOG_DEBUG((valueB * brightness) / 255, DEC);
         LOGLN_DEBUG();
     }

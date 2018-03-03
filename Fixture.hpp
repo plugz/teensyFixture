@@ -7,28 +7,27 @@ class PixelDriver;
 
 #define TARGET_FREQ_HZ 50
 
-enum class FixtureMode
-{
-    SIMPLE, // RGB, RGB, RGB.....
+enum class FixtureMode {
+    SIMPLE,       // RGB, RGB, RGB.....
     R_G_B_LEVELS, // 1 RGB for all pixels, then brightness of each pixel
     DEMO,
 };
 
 struct CRGB;
 
-class Fixture
-{
-public:
-    void begin(CRGB* pixels, int pixelCount);
-    void updateInput(uint8_t const* data, unsigned int size);
+class Fixture {
+  public:
+    void begin(CRGB *pixels, int pixelCount);
+    void updateInput(uint8_t const *data, unsigned int size);
     bool refreshPixels();
-private:
-    void updateInputSimple(uint8_t const* data);
-    void updateInputRGBLevels(uint8_t const* data);
-    void updateInputDemo(uint8_t const* data);
+
+  private:
+    void updateInputSimple(uint8_t const *data);
+    void updateInputRGBLevels(uint8_t const *data);
+    void updateInputDemo(uint8_t const *data);
     unsigned int getNumChannels() const;
     void refreshPixelsDemo();
-    CRGB* _pixels = nullptr;
+    CRGB *_pixels = nullptr;
     int _pixelCount = 0;
     FixtureMode _mode;
     unsigned long _prevUpdateMillis = 0;

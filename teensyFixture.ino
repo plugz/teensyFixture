@@ -107,7 +107,7 @@ void setup() {
     // above. The third is a buffer that is used to translate/scale the first buffer while
     // octows2811 may still be writing data out of the second buffer. The Teensy 3.2 has only 64K to
     // work with.
-    LEDS.addLeds<OCTOWS2811>(leds, NUM_LEDS_PER_STRIP);
+    LEDS.addLeds<OCTOWS2813>(leds, NUM_LEDS_PER_STRIP);
     LEDS.setBrightness(BRIGHTNESS);
 
     // static ip

@@ -53,7 +53,7 @@ static Fixture fixture;
 
 /// DONT CHANGE unless you know the consequences...
 #define CHANNEL_COUNT 4800 // because it divides by 3 nicely
-#define NUM_LEDS 120         // can not go higher than this - Runs out of SRAM
+#define NUM_LEDS 120       // can not go higher than this - Runs out of SRAM
 #define NUM_LEDS_PER_STRIP 120
 #define NUM_STRIPS 1
 #define UNIVERSE_COUNT 1
@@ -210,31 +210,31 @@ int checkACNHeaders(unsigned char *messagein, int messagelength) {
 
 void loop() {
     // Process packets
-    //int packetSize = Udp.parsePacket(); // Read UDP packet count
-    //if (packetSize > 0) {
-    //    LOGLN_DEBUG(packetSize);
-    //    LOGLN_DEBUG("reading");
-    //    Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
-    //    LOGLN_DEBUG("read done");
-    //    int count = checkACNHeaders(packetBuffer, packetSize);
-    //    LOGLN_DEBUG("check done");
-    //    if (count) {
-    //        LOG_DEBUG("packet size first ");
-    //        LOGLN_DEBUG(packetSize);
-    //        // calculate framerate
-    //        currentMillis = millis();
-    //        if (currentMillis > previousMillis) {
-    //            fps = 1 / ((currentMillis - previousMillis) * 0.001);
-    //        } else {
-    //            fps = 0;
-    //        }
-    //        previousMillis = currentMillis;
-    //        if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
-    //            LOGLN_DEBUG(fps);
-    //        sacnDMXReceived(packetBuffer, count); // process data function
-    //    } else
-    //        LOGLN_DEBUG("not sacn");
-    //}
+    int packetSize = Udp.parsePacket(); // Read UDP packet count
+    if (packetSize > 0) {
+        LOGLN_DEBUG(packetSize);
+        LOGLN_DEBUG("reading");
+        Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
+        LOGLN_DEBUG("read done");
+        int count = checkACNHeaders(packetBuffer, packetSize);
+        LOGLN_DEBUG("check done");
+        if (count) {
+            LOG_DEBUG("packet size first ");
+            LOGLN_DEBUG(packetSize);
+            // calculate framerate
+            currentMillis = millis();
+            if (currentMillis > previousMillis) {
+                fps = 1 / ((currentMillis - previousMillis) * 0.001);
+            } else {
+                fps = 0;
+            }
+            previousMillis = currentMillis;
+            if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
+                LOGLN_DEBUG(fps);
+            sacnDMXReceived(packetBuffer, count); // process data function
+        } else
+            LOGLN_DEBUG("not sacn");
+    }
     if (fixture.refreshPixels())
         LEDS.show();
 }

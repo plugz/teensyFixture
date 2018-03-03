@@ -9,7 +9,7 @@ void Fixture::begin(CRGB* pixels, int pixelCount)
 {
     _pixels = pixels;
     _pixelCount = pixelCount;
-    _mode = FixtureMode::DEMO;
+    _mode = FixtureMode::SIMPLE;
 }
 
 void Fixture::updateInput(uint8_t const* data, unsigned int size)

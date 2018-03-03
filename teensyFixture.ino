@@ -32,6 +32,8 @@
 #include <FastLED.h>
 // clang-format on
 
+#include "Fixture.hpp"
+
 // enter desired universe and subnet  (sACN first universe is 1)
 #define DMX_SUBNET 0
 #define DMX_UNIVERSE 1 //**Start** universe
@@ -47,10 +49,12 @@ static EthernetUDP Udp;
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
+static Fixture fixture;
+
 /// DONT CHANGE unless you know the consequences...
 #define CHANNEL_COUNT 4800 // because it divides by 3 nicely
-#define NUM_LEDS 8         // can not go higher than this - Runs out of SRAM
-#define NUM_LEDS_PER_STRIP 8
+#define NUM_LEDS 120         // can not go higher than this - Runs out of SRAM
+#define NUM_LEDS_PER_STRIP 120
 #define NUM_STRIPS 1
 #define UNIVERSE_COUNT 1
 #define LEDS_PER_UNIVERSE 170
@@ -123,43 +127,14 @@ void setup() {
     // multicast
     Udp.beginMulticast(multicastIP, SACN_PORT);
 
+    fixture.begin(leds, NUM_LEDS_PER_STRIP);
+
     // Once the Ethernet is initialised, run a test on the LEDs
     flashLeds();
 }
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
-    // first 3 bytes are RGB values
-    int valueR = data[0];
-    int valueG = data[1];
-    int valueB = data[2];
-    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
-    for (unsigned int i = 3; (i < 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
-         ++i && ++ledNumber) {
-        int brightness = data[i];
-        leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
-                               (valueB * brightness) / 255);
-        LOG_DEBUG("Led ");
-        LOG_DEBUG(ledNumber, DEC);
-        LOG_DEBUG(": ");
-        LOG_VERBOSE(valueR, DEC);
-        LOG_VERBOSE(" * ");
-        LOG_VERBOSE(brightness, DEC);
-        LOG_VERBOSE(" = ");
-        LOG_DEBUG((valueR * brightness) / 255, DEC);
-        LOG_DEBUG(", ");
-        LOG_VERBOSE(valueG, DEC);
-        LOG_VERBOSE(" * ");
-        LOG_VERBOSE(brightness, DEC);
-        LOG_VERBOSE(" = ");
-        LOG_DEBUG((valueG * brightness) / 255, DEC);
-        LOG_DEBUG(", ");
-        LOG_VERBOSE(valueB, DEC);
-        LOG_VERBOSE(" * ");
-        LOG_VERBOSE(brightness, DEC);
-        LOG_VERBOSE(" = ");
-        LOG_DEBUG((valueB * brightness) / 255, DEC);
-        LOGLN_DEBUG();
-    }
+    fixture.updateInput(data, dataSize);
 }
 
 void clearReceivedUniverses() {
@@ -235,29 +210,31 @@ int checkACNHeaders(unsigned char *messagein, int messagelength) {
 
 void loop() {
     // Process packets
-    int packetSize = Udp.parsePacket(); // Read UDP packet count
-    if (packetSize > 0) {
-        LOGLN_DEBUG(packetSize);
-        LOGLN_DEBUG("reading");
-        Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
-        LOGLN_DEBUG("read done");
-        int count = checkACNHeaders(packetBuffer, packetSize);
-        LOGLN_DEBUG("check done");
-        if (count) {
-            LOG_DEBUG("packet size first ");
-            LOGLN_DEBUG(packetSize);
-            // calculate framerate
-            currentMillis = millis();
-            if (currentMillis > previousMillis) {
-                fps = 1 / ((currentMillis - previousMillis) * 0.001);
-            } else {
-                fps = 0;
-            }
-            previousMillis = currentMillis;
-            if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
-                LOGLN_DEBUG(fps);
-            sacnDMXReceived(packetBuffer, count); // process data function
-        } else
-            LOGLN_DEBUG("not sacn");
-    }
+    //int packetSize = Udp.parsePacket(); // Read UDP packet count
+    //if (packetSize > 0) {
+    //    LOGLN_DEBUG(packetSize);
+    //    LOGLN_DEBUG("reading");
+    //    Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
+    //    LOGLN_DEBUG("read done");
+    //    int count = checkACNHeaders(packetBuffer, packetSize);
+    //    LOGLN_DEBUG("check done");
+    //    if (count) {
+    //        LOG_DEBUG("packet size first ");
+    //        LOGLN_DEBUG(packetSize);
+    //        // calculate framerate
+    //        currentMillis = millis();
+    //        if (currentMillis > previousMillis) {
+    //            fps = 1 / ((currentMillis - previousMillis) * 0.001);
+    //        } else {
+    //            fps = 0;
+    //        }
+    //        previousMillis = currentMillis;
+    //        if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
+    //            LOGLN_DEBUG(fps);
+    //        sacnDMXReceived(packetBuffer, count); // process data function
+    //    } else
+    //        LOGLN_DEBUG("not sacn");
+    //}
+    if (fixture.refreshPixels())
+        LEDS.show();
 }

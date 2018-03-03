@@ -183,10 +183,7 @@ void sacnDMXReceived(unsigned char *pbuff, int count) {
             if (pbuff[125] == 0) // start code must be 0
             {
                 LOGLN_DEBUG("startCode OK");
-                bool refresh = refreshLeds(b);
                 handleData(b, pbuff + 126, count);
-                if (refresh)
-                    LEDS.show();
             }
         }
     }

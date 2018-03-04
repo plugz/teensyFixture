@@ -22,6 +22,7 @@ class Fixture {
     bool refreshPixels();
 
   private:
+    void setAlwaysOn();
     void updateInputSimple(uint8_t const *data);
     void updateInputRGBLevels(uint8_t const *data);
     void updateInputDemo(uint8_t const *data);

@@ -63,9 +63,16 @@ bool Fixture::refreshPixels() {
             refreshPixelsDemo();
             break;
         }
+        setAlwaysOn();
         return true;
     }
     return false;
+}
+
+void Fixture::setAlwaysOn() {
+    for (int pixelIdx : {0, 40, 80}) {
+        _pixels[pixelIdx] = CRGB(255, 255, 255);
+    }
 }
 
 unsigned int Fixture::getNumChannels() const {

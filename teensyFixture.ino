@@ -49,10 +49,10 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
 #define CHANNEL_COUNT 4800 // because it divides by 3 nicely
-#define NUM_LEDS 8         // can not go higher than this - Runs out of SRAM
-#define NUM_LEDS_PER_STRIP 8
-#define NUM_STRIPS 1
-#define UNIVERSE_COUNT 1
+#define NUM_LEDS (170*8)         // can not go higher than this - Runs out of SRAM
+#define NUM_LEDS_PER_STRIP 170
+#define NUM_STRIPS 8
+#define UNIVERSE_COUNT 8
 #define LEDS_PER_UNIVERSE 170
 
 // MAX VALUES: 32 universes (~25 fps ?)
@@ -128,26 +128,30 @@ void setup() {
 }
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
-    // first 3 bytes are RGB values
-    int valueR = data[0];
-    int valueG = data[1];
-    int valueB = data[2];
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
-    for (unsigned int i = 3; (i < 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
-         ++i && ++ledNumber) {
-        int brightness = data[i];
-        leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
-                               (valueB * brightness) / 255);
-        LOG_DEBUG("Led ", DEC);
-        LOG_DEBUG(ledNumber, DEC);
-        LOG_DEBUG(": ");
-        LOG_DEBUG((valueR * brightness) / 255, DEC);
-        LOG_DEBUG(", ");
-        LOG_DEBUG((valueG * brightness) / 255, DEC);
-        LOG_DEBUG(", ");
-        LOG_DEBUG((valueB * brightness) / 255, DEC);
-        LOGLN_DEBUG();
+    for (unsigned int i = 0; i < dataSize; i += 3)
+    {
+        leds[++ledNumber] = CRGB(data[i + 0], data[i + 1], data[i + 2]);
+//        int valueR = data[0];
+//        int valueG = data[1];
+//        int valueB = data[2];
     }
+    // first 3 bytes are RGB values
+//    for (unsigned int i = 3; (i < 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
+//         ++i && ++ledNumber) {
+//        int brightness = data[i];
+//        leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
+//                               (valueB * brightness) / 255);
+//        LOG_DEBUG("Led ", DEC);
+//        LOG_DEBUG(ledNumber, DEC);
+//        LOG_DEBUG(": ");
+//        LOG_DEBUG((valueR * brightness) / 255, DEC);
+//        LOG_DEBUG(", ");
+//        LOG_DEBUG((valueG * brightness) / 255, DEC);
+//        LOG_DEBUG(", ");
+//        LOG_DEBUG((valueB * brightness) / 255, DEC);
+//        LOGLN_DEBUG();
+//    }
 }
 
 void clearReceivedUniverses() {

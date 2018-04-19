@@ -8,18 +8,6 @@
 // Please configure your Lighting product to use Unicast to the IP the device is given from your
 // DHCP server Multicast is not currently supported due to bandwidth/processor limitations
 
-// You will need the Ethercard and FastLed Libraries from:
-// [url]https://github.com/FastLED/FastLED/releases[/url]
-//
-// The Atmega328 only has 2k of SRAM.  This is a severe limitation to being able to control large
-// numbers of smart pixels due to the pixel data needing to be stored in an array as well as
-// a reserved buffer for receiving Ethernet packets.  This code will allow you to use a maximum of
-// 240 pixels as that just about maxes out the SRAM on the Atmega328.
-
-// There is deliberately no serial based reporting from the code to conserve SRAM.  There is a
-// **little** bit available if you need to add some in for debugging but keep it to an absolute
-// minimum for debugging only.
-
 #include "Log.hpp"
 #include "Utils.hpp"
 
@@ -27,10 +15,11 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
-#define USE_OCTOWS2811
 #include <OctoWS2811.h>
-#include <FastLED.h>
 // clang-format on
+
+#include <array>
+#include <vector>
 
 // enter desired universe and subnet  (sACN first universe is 1)
 #define DMX_SUBNET 0
@@ -41,7 +30,6 @@ byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
 // IP address of ethernet shield
 static const IPAddress ip(192, 168, 2, 2);
 #define SACN_PORT 5568
-// Multicast IP. Last 2 bytes are supposed to be the SACN Universe.
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
@@ -63,11 +51,11 @@ static EthernetUDP Udps[UNIVERSE_COUNT];
 // #define UNIVERSE_COUNT 32
 // #define LEDS_PER_UNIVERSE 170
 
-// 0-255
-#define BRIGHTNESS 255
-
 // Define the array of leds
-static CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
+DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
+uint8_t drawingMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
+
+static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_RGB | WS2813_800kHz);
 
 // fps log
 static float fps = 0;
@@ -79,13 +67,14 @@ bool receivedUniverses[UNIVERSE_COUNT] = {
 };
 
 void flashLeds() {
-    LEDS.showColor(CRGB(255, 0, 0)); // turn all pixels on red
-    delay(500);
-    LEDS.showColor(CRGB(0, 255, 0)); // turn all pixels on green
-    delay(500);
-    LEDS.showColor(CRGB(0, 0, 255)); // turn all pixels on blue
-    delay(500);
-    LEDS.showColor(CRGB(0, 0, 0)); // turn all pixels off
+    for (std::array<int, 3> const &color :
+    std::vector<std::array<int, 3>>{{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 0, 0}})
+    {
+        for (int i = 0; i < NUM_LEDS_PER_STRIP * NUM_STRIPS; ++i)
+            leds.setPixel(i, color[0], color[1], color[2]);
+        leds.show();
+        delay(500);
+    }
 }
 
 void setup() {
@@ -96,15 +85,7 @@ void setup() {
 
     LOGSETUP();
 
-    // *** WARNING ***
-    // 3 big blocks of Memory in use here:
-    // The first is your LEDs array - which is going to be over NUM_LEDS_PER_STRIP * NUM_STRIPS * 3
-    // bytes. The second is the buffer that octows2811 is writing out of, which is the same size as
-    // above. The third is a buffer that is used to translate/scale the first buffer while
-    // octows2811 may still be writing data out of the second buffer. The Teensy 3.2 has only 64K to
-    // work with.
-    LEDS.addLeds<OCTOWS2813>(leds, NUM_LEDS_PER_STRIP);
-    LEDS.setBrightness(BRIGHTNESS);
+    leds.begin();
 
     // static ip
     Ethernet.begin(mac, ip);
@@ -135,27 +116,10 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
-        leds[ledNumber++] = CRGB(data[i + 0], data[i + 1], data[i + 2]);
-//        int valueR = data[0];
-//        int valueG = data[1];
-//        int valueB = data[2];
+        leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
     }
-    // first 3 bytes are RGB values
-//    for (unsigned int i = 3; (i < 3 + dataSize) && (ledNumber < ARRAY_COUNT(leds));
-//         ++i && ++ledNumber) {
-//        int brightness = data[i];
-//        leds[ledNumber] = CRGB((valueR * brightness) / 255, (valueG * brightness) / 255,
-//                               (valueB * brightness) / 255);
-//        LOG_DEBUG("Led ", DEC);
-//        LOG_DEBUG(ledNumber, DEC);
-//        LOG_DEBUG(": ");
-//        LOG_DEBUG((valueR * brightness) / 255, DEC);
-//        LOG_DEBUG(", ");
-//        LOG_DEBUG((valueG * brightness) / 255, DEC);
-//        LOG_DEBUG(", ");
-//        LOG_DEBUG((valueB * brightness) / 255, DEC);
-//        LOGLN_DEBUG();
-//    }
+    // TODO Test this also
+    // memcpy(drawingMemory + (ledNumber * 3), data, dataSize);
 }
 
 void clearReceivedUniverses() {
@@ -171,7 +135,7 @@ bool refreshLeds(unsigned int universe) {
     // Display leds now, before updating data.
     if (receivedUniverses[universe]) {
         clearReceivedUniverses();
-        LEDS.show();
+        leds.show();
         return false;
     }
 
@@ -207,7 +171,7 @@ void sacnDMXReceived(unsigned char *pbuff, int count) {
                 bool refresh = refreshLeds(b);
                 handleData(b, pbuff + 126, count);
                 if (refresh)
-                    LEDS.show();
+                    leds.show();
             }
         }
     }

@@ -42,8 +42,6 @@ byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
 static const IPAddress ip(192, 168, 2, 2);
 #define SACN_PORT 5568
 // Multicast IP. Last 2 bytes are supposed to be the SACN Universe.
-static const IPAddress multicastIP(239, 255, 0, 1);
-static EthernetUDP Udp;
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
@@ -54,6 +52,8 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 #define NUM_STRIPS 8
 #define UNIVERSE_COUNT 8
 #define LEDS_PER_UNIVERSE 170
+
+static EthernetUDP Udps[UNIVERSE_COUNT];
 
 // MAX VALUES: 32 universes (~25 fps ?)
 // #define CHANNEL_COUNT 16320 //because it divides by 3 nicely
@@ -121,7 +121,11 @@ void setup() {
     // unicast
     // Udp.begin(SACN_PORT);
     // multicast
-    Udp.beginMulticast(multicastIP, SACN_PORT);
+    unsigned int i = 1;
+    for (auto& Udp: Udps)
+    {
+        Udp.beginMulticast(IPAddress(239, 255, 0, i++), SACN_PORT);
+    }
 
     // Once the Ethernet is initialised, run a test on the LEDs
     flashLeds();
@@ -227,6 +231,8 @@ int checkACNHeaders(unsigned char *messagein, int messagelength) {
 
 void loop() {
     // Process packets
+    for (auto& Udp : Udps)
+    {
     int packetSize = Udp.parsePacket(); // Read UDP packet count
     if (packetSize > 0) {
         LOGLN_DEBUG(packetSize);
@@ -251,5 +257,6 @@ void loop() {
             sacnDMXReceived(packetBuffer, count); // process data function
         } else
             LOGLN_DEBUG("not sacn");
+    }
     }
 }

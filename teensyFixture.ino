@@ -135,7 +135,7 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
-        leds[++ledNumber] = CRGB(data[i + 0], data[i + 1], data[i + 2]);
+        leds[ledNumber++] = CRGB(data[i + 0], data[i + 1], data[i + 2]);
 //        int valueR = data[0];
 //        int valueG = data[1];
 //        int valueB = data[2];

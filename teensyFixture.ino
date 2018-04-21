@@ -118,8 +118,6 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     {
         leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
     }
-    // TODO Test this also
-    // memcpy(drawingMemory + (ledNumber * 3), data, dataSize);
 }
 
 void clearReceivedUniverses() {

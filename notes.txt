@@ -1,3 +1,16 @@
+changes in Ethernet lib:
+* w5100.h:
+** comment   SPISettings(14000000
+** uncomment SPISettings(30000000
+** #define MAX_SOCK_NUM 8
+** SBASE[MAX_SOCK_NUM]
+** RBASE[MAX_SOCK_NUM]
+* w5100.cpp:
+** no need to incread buffer size, do nothing
+* Ethernet.h:
+** #define MAX_SOCK_NUM 8
+
+
 pin usage:
 
 0  OctoWS2811

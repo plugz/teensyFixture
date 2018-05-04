@@ -49,10 +49,9 @@ uint8_t drawingMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
 
 static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_RGB | WS2813_800kHz);
 
-// fps log
-static float fps = 0;
 static unsigned long currentMillis = 0;
 static unsigned long previousMillis = 0;
+static bool cleared = false;
 
 bool receivedUniverses[UNIVERSE_COUNT] = {
     false,
@@ -115,6 +114,7 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
 void clearReceivedUniverses() {
     for (auto &receivedUniverse : receivedUniverses)
         receivedUniverse = false;
+    cleared = true;
 }
 
 bool refreshLeds(unsigned int universe) {
@@ -198,19 +198,18 @@ void loop() {
         if (count) {
             LOG_DEBUG("packet size first ");
             LOGLN_DEBUG(packetSize);
-            // calculate framerate
-            currentMillis = millis();
-            if (currentMillis > previousMillis) {
-                fps = 1 / ((currentMillis - previousMillis) * 0.001);
-            } else {
-                fps = 0;
-            }
-            previousMillis = currentMillis;
-            if (fps > 10 && fps < 500) // don't show numbers below or over given ammount
-                LOGLN_DEBUG(fps);
             sacnDMXReceived(packetBuffer, count); // process data function
+            previousMillis = millis();
+            cleared = false;
         } else
             LOGLN_DEBUG("not sacn");
     }
+    }
+    if (!cleared)
+    {
+        if (millis() - previousMillis > 1000)
+        {
+            clearReceivedUniverses();
+        }
     }
 }

@@ -34,22 +34,14 @@ static const IPAddress ip(192, 168, 2, 2);
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
-#define CHANNEL_COUNT 4800 // because it divides by 3 nicely
 #define NUM_LEDS (170*8)         // can not go higher than this - Runs out of SRAM
 #define NUM_LEDS_PER_STRIP 170
 #define NUM_STRIPS 8
 #define UNIVERSE_COUNT 8
 #define LEDS_PER_UNIVERSE 170
+#define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
 static EthernetUDP Udps[UNIVERSE_COUNT];
-
-// MAX VALUES: 32 universes (~25 fps ?)
-// #define CHANNEL_COUNT 16320 //because it divides by 3 nicely
-// #define NUM_LEDS 5440 // can not go higher than this - Runs out of SRAM
-// #define NUM_LEDS_PER_STRIP 680
-// #define NUM_STRIPS 8
-// #define UNIVERSE_COUNT 32
-// #define LEDS_PER_UNIVERSE 170
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
@@ -152,8 +144,8 @@ bool refreshLeds(unsigned int universe) {
 }
 
 void sacnDMXReceived(unsigned char *pbuff, int count) {
-    if (count > CHANNEL_COUNT)
-        count = CHANNEL_COUNT;
+    if (count > CHANNELS_PER_UNIVERSE)
+        count = CHANNELS_PER_UNIVERSE;
     byte b = pbuff[113]; // DMX Subnet
     if (b == DMX_SUBNET) {
         LOGLN_DEBUG("subnet OK");

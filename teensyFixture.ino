@@ -47,7 +47,7 @@ static EthernetUDP Udps[UNIVERSE_COUNT];
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
 uint8_t drawingMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
 
-static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_RGB | WS2813_800kHz);
+static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_GRB | WS2811_800kHz);
 
 static unsigned long currentMillis = 0;
 static unsigned long previousMillis = 0;
@@ -107,6 +107,8 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
+        if (i >= 360)
+            return;
         leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
     }
 }

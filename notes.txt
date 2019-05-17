@@ -24,8 +24,8 @@ pin usage:
 8  OctoWS2811
 9  WIZ RESET
 10 SPI_CS
-11 SPI_MISO
-12 SPI_MOSI (Octo (unused, SYNC pin))
+11 SPI_MOSI
+12 SPI_MISO (Octo (unused, SYNC pin))
 13 SPI_SCK (LED)
 14 OctoWS2811
 15 OctoWS2811

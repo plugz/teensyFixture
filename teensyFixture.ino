@@ -34,14 +34,14 @@ static const IPAddress ip(192, 168, 2, 2);
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
-#define NUM_LEDS (170*8)         // can not go higher than this - Runs out of SRAM
-#define NUM_LEDS_PER_STRIP 170
+#define NUM_LEDS (340*8)         // can not go higher than this - Runs out of SRAM
+#define NUM_LEDS_PER_STRIP 340
 #define NUM_STRIPS 8
-#define UNIVERSE_COUNT 8
+#define UNIVERSE_COUNT 16
 #define LEDS_PER_UNIVERSE 170
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
-static EthernetUDP Udps[UNIVERSE_COUNT];
+static EthernetUDP Udps[1/*UNIVERSE_COUNT*/];
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
@@ -107,8 +107,8 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
-        if (i >= 360)
-            return;
+        //if (i >= 360)
+        //    return;
         leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
     }
 }

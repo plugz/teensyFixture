@@ -34,9 +34,9 @@ static const IPAddress ip(192, 168, 2, 2);
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
-#define NUM_LEDS (340*8)         // can not go higher than this - Runs out of SRAM
-#define NUM_LEDS_PER_STRIP 340
+#define NUM_LEDS_PER_STRIP 240
 #define NUM_STRIPS 8
+#define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 #define UNIVERSE_COUNT 16
 #define LEDS_PER_UNIVERSE 170
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
@@ -104,7 +104,11 @@ void setup() {
 }
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
-    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+    universe -= DMX_UNIVERSE;
+    unsigned int ledNumber = 0;
+    for (unsigned int i = 0; i < universe; ++i)
+        ledNumber += (i % 2 ? 70 : 170);
+    //unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
         //if (i >= 360)

@@ -10,6 +10,11 @@ changes in Ethernet lib:
 * Ethernet.h:
 ** #define MAX_SOCK_NUM 8
 
+passage a 1 seul max_sock_num
+passage a w5500_4k_buffer et w5200_4k_buffer
+
+retour a 2k, mais avec 16 sockets
+
 
 pin usage:
 

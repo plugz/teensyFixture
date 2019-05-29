@@ -41,7 +41,7 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 #define LEDS_PER_UNIVERSE 170
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
-static EthernetUDP Udps[1/*UNIVERSE_COUNT*/];
+static EthernetUDP Udps[UNIVERSE_COUNT];
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];

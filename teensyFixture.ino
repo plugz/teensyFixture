@@ -41,7 +41,7 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 #define LEDS_PER_UNIVERSE 170
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
-static EthernetUDP Udps[UNIVERSE_COUNT];
+static EthernetUDP Udps[8];//UNIVERSE_COUNT];
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
@@ -193,23 +193,24 @@ void loop() {
     // Process packets
     for (auto& Udp : Udps)
     {
-    int packetSize = Udp.parsePacket(); // Read UDP packet count
-    if (packetSize > 0) {
-        LOGLN_DEBUG(packetSize);
-        LOGLN_DEBUG("reading");
-        Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
-        LOGLN_DEBUG("read done");
-        int count = checkACNHeaders(packetBuffer, packetSize);
-        LOGLN_DEBUG("check done");
-        if (count) {
-            LOG_DEBUG("packet size first ");
+        int packetSize;
+        while ((packetSize = Udp.parsePacket()) > 0) // Read UDP packet count
+        {
             LOGLN_DEBUG(packetSize);
-            sacnDMXReceived(packetBuffer, count); // process data function
-            previousMillis = millis();
-            cleared = false;
-        } else
-            LOGLN_DEBUG("not sacn");
-    }
+            LOGLN_DEBUG("reading");
+            Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
+            LOGLN_DEBUG("read done");
+            int count = checkACNHeaders(packetBuffer, packetSize);
+            LOGLN_DEBUG("check done");
+            if (count) {
+                LOG_DEBUG("packet size first ");
+                LOGLN_DEBUG(packetSize);
+                sacnDMXReceived(packetBuffer, count); // process data function
+                previousMillis = millis();
+                cleared = false;
+            } else
+                LOGLN_DEBUG("not sacn");
+        }
     }
     if (!cleared)
     {

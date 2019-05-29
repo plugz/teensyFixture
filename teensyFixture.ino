@@ -121,6 +121,10 @@ void clearReceivedUniverses() {
     for (auto &receivedUniverse : receivedUniverses)
         receivedUniverse = false;
     cleared = true;
+
+    // these are not connected
+    receivedUniverses[10] = true;
+    receivedUniverses[11] = true;
 }
 
 bool refreshLeds(unsigned int universe) {
@@ -131,6 +135,7 @@ bool refreshLeds(unsigned int universe) {
     // Display leds now, before updating data.
     if (receivedUniverses[universe]) {
         clearReceivedUniverses();
+        receivedUniverses[universe] = true;
         leds.show();
         return false;
     }

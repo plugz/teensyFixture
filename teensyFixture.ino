@@ -196,7 +196,10 @@ int checkACNHeaders(unsigned char *messagein, int messagelength) {
 }
 
 void loop() {
+    static bool receivedStuff = false;
+    static int receivedTime = 0;
     // Process packets
+    bool receivedStuffNow = false;
     for (auto& Udp : Udps)
     {
         int packetSize;
@@ -214,21 +217,32 @@ void loop() {
                 sacnDMXReceived(packetBuffer, count); // process data function
                 previousMillis = millis();
                 cleared = false;
+                receivedStuffNow = true;
             } else
                 LOGLN_DEBUG("not sacn");
         }
     }
-    if (!cleared)
+    if (receivedStuffNow)
     {
-        if (millis() - previousMillis > 1000)
-        {
-            clearReceivedUniverses();
-        }
+        receivedStuff = true;
+        receivedTime = millis();
     }
-    int currentTime = millis();
-    if (currentTime - previousDisplayMillis > 40) // 25 fps
+    if (receivedStuff && (millis() - receivedTime > 3))
     {
-        previousDisplayMillis = currentTime;
+        receivedStuff = false;
         leds.show();
     }
+//    if (!cleared)
+//    {
+//        if (millis() - previousMillis > 1000)
+//        {
+//            clearReceivedUniverses();
+//        }
+//    }
+//    int currentTime = millis();
+//    if (currentTime - previousDisplayMillis > 40) // 25 fps
+//    {
+//        previousDisplayMillis = currentTime;
+//        leds.show();
+//    }
 }

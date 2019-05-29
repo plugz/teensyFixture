@@ -51,6 +51,7 @@ static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_
 
 static unsigned long currentMillis = 0;
 static unsigned long previousMillis = 0;
+static unsigned long previousDisplayMillis = 0;
 static bool cleared = false;
 
 bool receivedUniverses[UNIVERSE_COUNT] = {
@@ -169,10 +170,10 @@ void sacnDMXReceived(unsigned char *pbuff, int count) {
             if (pbuff[125] == 0) // start code must be 0
             {
                 LOGLN_DEBUG("startCode OK");
-                bool refresh = refreshLeds(b);
+                //bool refresh = refreshLeds(b);
                 handleData(b, pbuff + 126, count);
-                if (refresh)
-                    leds.show();
+                //if (refresh)
+                //    leds.show();
             }
         }
     }
@@ -223,5 +224,11 @@ void loop() {
         {
             clearReceivedUniverses();
         }
+    }
+    int currentTime = millis();
+    if (currentTime - previousDisplayMillis > 40) // 25 fps
+    {
+        previousDisplayMillis = currentTime;
+        leds.show();
     }
 }

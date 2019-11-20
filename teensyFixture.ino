@@ -21,14 +21,17 @@
 #include <array>
 #include <vector>
 
+
+#define CTRL_NUMBER 0
+
 // enter desired universe and subnet  (sACN first universe is 1)
 #define DMX_SUBNET 0
-#define DMX_UNIVERSE 17 //**Start** universe
+#define DMX_UNIVERSE (1 + CTRL_NUMBER * 16) //**Start** universe
 
 // Set a different MAC address for each...
-byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
+byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15 + CTRL_NUMBER};
 // IP address of ethernet shield
-static const IPAddress ip(192, 168, 2, 2);
+static const IPAddress ip(192, 168, 2, 2 + CTRL_NUMBER);
 #define SACN_PORT 5568
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
@@ -41,7 +44,7 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 #define LEDS_PER_UNIVERSE 170
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
-static EthernetUDP Udps[8];//UNIVERSE_COUNT];
+static EthernetUDP udps[UNIVERSE_COUNT / 2];
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
@@ -94,10 +97,11 @@ void setup() {
     // unicast
     // Udp.begin(SACN_PORT);
     // multicast
-    unsigned int i = 9;
-    for (auto& Udp: Udps)
+    //unsigned int i = 9;
+    unsigned int i = 1 + (CTRL_NUMBER * 8);
+    for (auto& udp: udps)
     {
-        Udp.beginMulticast(IPAddress(239, 255, 0, i++), SACN_PORT);
+        udp.beginMulticast(IPAddress(239, 255, 0, i++), ARTNET_PORT);
     }
 
     // Once the Ethernet is initialised, run a test on the LEDs
@@ -200,14 +204,14 @@ void loop() {
     static int receivedTime = 0;
     // Process packets
     bool receivedStuffNow = false;
-    for (auto& Udp : Udps)
+    for (auto& udp : udps)
     {
         int packetSize;
-        while ((packetSize = Udp.parsePacket()) > 0) // Read UDP packet count
+        while ((packetSize = udp.parsePacket()) > 0) // Read UDP packet count
         {
             LOGLN_DEBUG(packetSize);
             LOGLN_DEBUG("reading");
-            Udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
+            udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
             LOGLN_DEBUG("read done");
             int count = checkACNHeaders(packetBuffer, packetSize);
             LOGLN_DEBUG("check done");

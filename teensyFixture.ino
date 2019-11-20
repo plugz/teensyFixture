@@ -23,7 +23,7 @@
 
 // enter desired universe and subnet  (sACN first universe is 1)
 #define DMX_SUBNET 0
-#define DMX_UNIVERSE 1 //**Start** universe
+#define DMX_UNIVERSE 17 //**Start** universe
 
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15};
@@ -94,7 +94,7 @@ void setup() {
     // unicast
     // Udp.begin(SACN_PORT);
     // multicast
-    unsigned int i = 1;
+    unsigned int i = 9;
     for (auto& Udp: Udps)
     {
         Udp.beginMulticast(IPAddress(239, 255, 0, i++), SACN_PORT);

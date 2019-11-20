@@ -21,6 +21,42 @@
 #include <array>
 #include <vector>
 
+#define ARTNET_PORT 6454
+
+#define ARTNET_POLL           0x2000
+#define ARTNET_POLLREPLY      0x2100
+#define ARTNET_DIAGDATA       0x2300
+#define ARTNET_COMMAND        0x2400
+#define ARTNET_DMX            0x5000
+#define ARTNET_NZS            0x5100
+#define ARTNET_ADDRESS        0x6000
+#define ARTNET_INPUT          0x7000
+#define ARTNET_TODREQUEST     0x8000
+#define ARTNET_TODDATA        0x8100
+#define ARTNET_TODCONTROL     0x8200
+#define ARTNET_RDM            0x8300
+#define ARTNET_RDMSUB         0x8400
+#define ARTNET_VIDEOSTEUP     0xa010
+#define ARTNET_VIDEOPALETTE   0xa020
+#define ARTNET_VIDEODATA      0xa040
+#define ARTNET_MACMASTER      0xf000
+#define ARTNET_MACSLAVE       0xf100
+#define ARTNET_FIRMWAREMASTER 0xf200
+#define ARTNET_FIRMWAREREPLY  0xf300
+#define ARTNET_FILETNMASTER   0xf400
+#define ARTNET_FILEFNMASTER   0xf500
+#define ARTNET_FILEFNREPLY    0xf600
+#define ARTNET_IPPROG         0xf800
+#define ARTNET_IPREPLY        0xf900
+#define ARTNET_MEDIA          0x9000
+#define ARTNET_MEDIAPATCH     0x9100
+#define ARTNET_MEDIACONTROL   0x9200
+#define ARTNET_MEDIACONTROLREPLY 0x9300
+#define ARTNET_TIMECODE       0x9700
+#define ARTNET_TIMESYNC       0x9800
+#define ARTNET_TRIGGER        0x9900
+#define ARTNET_DIRECTORY      0x9a00
+#define ARTNET_DIRECTORYREPLY 0x9b00
 
 #define CTRL_NUMBER 0
 
@@ -32,7 +68,6 @@
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15 + CTRL_NUMBER};
 // IP address of ethernet shield
 static const IPAddress ip(192, 168, 2, 2 + CTRL_NUMBER);
-#define SACN_PORT 5568
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
@@ -95,7 +130,7 @@ void setup() {
     LOGLN_DEBUG(Ethernet.localIP());
 
     // unicast
-    // Udp.begin(SACN_PORT);
+    //udp.begin(ARTNET_PORT);
     // multicast
     //unsigned int i = 9;
     unsigned int i = 1 + (CTRL_NUMBER * 8);
@@ -159,44 +194,35 @@ bool refreshLeds(unsigned int universe) {
     return true;
 }
 
-void sacnDMXReceived(unsigned char *pbuff, int count) {
-    if (count > CHANNELS_PER_UNIVERSE)
-        count = CHANNELS_PER_UNIVERSE;
-    byte b = pbuff[113]; // DMX Subnet
-    if (b == DMX_SUBNET) {
-        LOGLN_DEBUG("subnet OK");
+void artnetDMXReceived(unsigned char *pbuff, int count) {
+    if (count < 19)
+        return;
 
-        b = pbuff[114]; // DMX Universe
+    int universe = ((int)pbuff[15] << 8) | pbuff[14];
+    int dmxLen = ((int)pbuff[16] << 8) | pbuff[17];
+    int sequence = pbuff[12];
 
-        if (b >= DMX_UNIVERSE && b <= DMX_UNIVERSE + UNIVERSE_COUNT) {
-            LOGLN_DEBUG("universe OK");
+    if (dmxLen > CHANNELS_PER_UNIVERSE)
+        dmxLen = CHANNELS_PER_UNIVERSE;
 
-            if (pbuff[125] == 0) // start code must be 0
-            {
-                LOGLN_DEBUG("startCode OK");
-                //bool refresh = refreshLeds(b);
-                handleData(b, pbuff + 126, count);
-                //if (refresh)
-                //    leds.show();
-            }
-        }
+    if (universe >= DMX_UNIVERSE && universe <= DMX_UNIVERSE + UNIVERSE_COUNT) {
+        LOGLN_DEBUG("universe OK");
+
+        handleData(universe, pbuff + 18, dmxLen);
     }
 }
 
-int checkACNHeaders(unsigned char *messagein, int messagelength) {
-    // Do some VERY basic checks to see if it's an E1.31 packet.
-    // Bytes 4 to 12 of an E1.31 Packet contain "ACN-E1.17"
-    // Only checking for the A and the 7 in the right places as well as 0x10 as the header.
-    // Technically this is outside of spec and could cause problems but its enough checks for us
-    // to determine if the packet should be tossed or used.
-    // This improves the speed of packet processing as well as reducing the memory overhead.
-    // On an Isolated network this should never be a problem....
-    if (messagein[1] == 0x10 && messagein[4] == 0x41 && messagein[12] == 0x37) {
-        // number of values plus start code
-        int addresscount = (byte)messagein[123] * 256 + (byte)messagein[124];
-        return addresscount - 1; // Return how many values are in the packet.
-    }
-    return 0;
+static bool checkPacket(uint8_t const* buf, unsigned int len, int* opCode)
+{
+    if (len < 12)
+        return false;
+    if (memcmp(buf, "Art-Net", 7))
+        return false;
+    if (buf[7] != 0)
+        return false;
+
+    *opCode = ((int)buf[9] << 8) | buf[8];
+    return true;
 }
 
 void loop() {
@@ -213,17 +239,18 @@ void loop() {
             LOGLN_DEBUG("reading");
             udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
             LOGLN_DEBUG("read done");
-            int count = checkACNHeaders(packetBuffer, packetSize);
+            int opcode;
+            bool check = checkPacket(packetBuffer, packetSize, &opcode);
             LOGLN_DEBUG("check done");
-            if (count) {
+            if (check && opcode == ARTNET_DMX) {
                 LOG_DEBUG("packet size first ");
                 LOGLN_DEBUG(packetSize);
-                sacnDMXReceived(packetBuffer, count); // process data function
+                artnetDMXReceived(packetBuffer, packetSize); // process data function
                 previousMillis = millis();
                 cleared = false;
                 receivedStuffNow = true;
             } else
-                LOGLN_DEBUG("not sacn");
+                LOGLN_DEBUG("not artnet");
         }
     }
     if (receivedStuffNow)

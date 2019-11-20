@@ -18,6 +18,9 @@ retour a 2k, mais avec 16 sockets
 repassage a 8 sockets
 
 
+ARTNET multicast (???)
+
+
 pin usage:
 
 0  OctoWS2811

@@ -60,9 +60,9 @@
 
 #define CTRL_NUMBER 0
 
-// enter desired universe and subnet  (sACN first universe is 1)
+// enter desired universe and subnet  (artnet first universe is 0)
 #define DMX_SUBNET 0
-#define DMX_UNIVERSE (1 + CTRL_NUMBER * 16) //**Start** universe
+#define DMX_UNIVERSE (0 + CTRL_NUMBER * 16) //**Start** universe
 
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15 + CTRL_NUMBER};
@@ -72,18 +72,20 @@ static const IPAddress ip(192, 168, 2, 2 + CTRL_NUMBER);
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
-#define NUM_LEDS_PER_STRIP 240
+#define NUM_LEDS_PER_STRIP (18 * 9 * 6)
 #define NUM_STRIPS 8
 #define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
-#define UNIVERSE_COUNT 16
-#define LEDS_PER_UNIVERSE 170
+// 6 universes per strip
+// 8 strips
+#define UNIVERSE_COUNT (6 * 8)
+#define LEDS_PER_UNIVERSE (18 * 9)
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
-static EthernetUDP udps[UNIVERSE_COUNT / 2];
+static EthernetUDP udp;
 
 // Define the array of leds
-DMAMEM uint8_t displayMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
-uint8_t drawingMemory[3 * NUM_LEDS_PER_STRIP * NUM_STRIPS];
+DMAMEM uint8_t displayMemory[3 * NUM_LEDS];
+uint8_t drawingMemory[3 * NUM_LEDS];
 
 static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_GRB | WS2811_800kHz);
 
@@ -130,25 +132,21 @@ void setup() {
     LOGLN_DEBUG(Ethernet.localIP());
 
     // unicast
-    //udp.begin(ARTNET_PORT);
+    udp.begin(ARTNET_PORT);
     // multicast
     //unsigned int i = 9;
-    unsigned int i = 1 + (CTRL_NUMBER * 8);
-    for (auto& udp: udps)
-    {
-        udp.beginMulticast(IPAddress(239, 255, 0, i++), ARTNET_PORT);
-    }
+    //unsigned int i = 1 + (CTRL_NUMBER * 8);
+    //for (auto& udp: udps)
+    //{
+    //    udp.beginMulticast(IPAddress(239, 255, 0, i++), ARTNET_PORT);
+    //}
 
     // Once the Ethernet is initialised, run a test on the LEDs
     flashLeds();
 }
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
-    universe -= DMX_UNIVERSE;
-    unsigned int ledNumber = 0;
-    for (unsigned int i = 0; i < universe; ++i)
-        ledNumber += (i % 2 ? 70 : 170);
-    //unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
+    unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
     for (unsigned int i = 0; i < dataSize; i += 3)
     {
         //if (i >= 360)
@@ -230,14 +228,14 @@ void loop() {
     static int receivedTime = 0;
     // Process packets
     bool receivedStuffNow = false;
-    for (auto& udp : udps)
+    //for (auto& udp : udps)
     {
         int packetSize;
         while ((packetSize = udp.parsePacket()) > 0) // Read UDP packet count
         {
             LOGLN_DEBUG(packetSize);
             LOGLN_DEBUG("reading");
-            udp.read(packetBuffer, ETHERNET_BUFFER); // read UDP packet
+            udp.read(packetBuffer, sizeof(packetBuffer)); // read UDP packet
             LOGLN_DEBUG("read done");
             int opcode;
             bool check = checkPacket(packetBuffer, packetSize, &opcode);

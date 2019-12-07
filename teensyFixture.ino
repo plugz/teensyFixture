@@ -60,10 +60,6 @@
 
 #define CTRL_NUMBER 0
 
-// enter desired universe and subnet  (artnet first universe is 0)
-#define DMX_SUBNET 0
-#define DMX_UNIVERSE (0 + CTRL_NUMBER * 16) //**Start** universe
-
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15 + CTRL_NUMBER};
 // IP address of ethernet shield
@@ -72,14 +68,18 @@ static const IPAddress ip(192, 168, 2, 2 + CTRL_NUMBER);
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
 /// DONT CHANGE unless you know the consequences...
-#define NUM_LEDS_PER_STRIP (18 * 9 * 6)
+#define NUM_LEDS_PER_STRIP (18 * 9 * 2)
 #define NUM_STRIPS 8
 #define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 // 6 universes per strip
 // 8 strips
-#define UNIVERSE_COUNT (6 * 8)
+#define UNIVERSE_COUNT (2 * 8)
 #define LEDS_PER_UNIVERSE (18 * 9)
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
+
+// enter desired universe and subnet  (artnet first universe is 0)
+#define DMX_SUBNET 0
+#define DMX_UNIVERSE (0 + CTRL_NUMBER * UNIVERSE_COUNT) //**Start** universe
 
 static EthernetUDP udp;
 

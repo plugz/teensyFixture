@@ -147,11 +147,19 @@ void setup() {
 
 void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
     unsigned int ledNumber = (universe - DMX_UNIVERSE) * LEDS_PER_UNIVERSE;
-    for (unsigned int i = 0; i < dataSize; i += 3)
-    {
-        //if (i >= 360)
-        //    return;
-        leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
+    for (unsigned int i = 0; i < dataSize; i += 3) {
+        if ((ledNumber / 18) % 2 == 0) {
+            // zig-zag even
+            leds.setPixel(ledNumber++, data[i + 0], data[i + 1], data[i + 2]);
+        }
+        else {
+            // zig-zag odd
+            unsigned int const ln = ledNumber;
+            unsigned int const lineNumber = ledNumber / 18;
+            unsigned int const idxInLine = ledNumber % 18;
+            leds.setPixel((lineNumber + 1) * 18 - (idxInLine + 1), data[i + 0], data[i + 1], data[i + 2]);
+            ++ledNumber;
+        }
     }
 }
 

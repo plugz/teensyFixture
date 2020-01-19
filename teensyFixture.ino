@@ -153,10 +153,9 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
         }
         else {
             // zig-zag odd
-            unsigned int const ln = ledNumber;
-            unsigned int const lineNumber = ledNumber / 18;
-            unsigned int const idxInLine = ledNumber % 18;
-            leds.setPixel((lineNumber + 1) * 18 - (idxInLine + 1), data[i + 0], data[i + 1], data[i + 2]);
+            unsigned int const line = ledNumber / 18;
+            unsigned int const column = ledNumber % 18;
+            leds.setPixel((line + 1) * 18 - (column + 1), data[i + 0], data[i + 1], data[i + 2]);
             ++ledNumber;
         }
     }
@@ -165,10 +164,6 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
 void clearReceivedUniverses() {
     for (auto &receivedUniverse : receivedUniverses)
         receivedUniverse = false;
-
-    // these are not connected
-    receivedUniverses[10] = true;
-    receivedUniverses[11] = true;
 }
 
 bool refreshLeds(unsigned int universe) {
@@ -266,10 +261,4 @@ void loop() {
         receivedStuff = false;
         leds.show();
     }
-//    int currentTime = millis();
-//    if (currentTime - previousDisplayMillis > 40) // 25 fps
-//    {
-//        previousDisplayMillis = currentTime;
-//        leds.show();
-//    }
 }

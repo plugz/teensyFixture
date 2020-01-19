@@ -9,7 +9,6 @@
 // DHCP server Multicast is not currently supported due to bandwidth/processor limitations
 
 #include "Log.hpp"
-#include "Utils.hpp"
 
 // clang-format off
 #include <SPI.h>

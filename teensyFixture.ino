@@ -92,7 +92,6 @@ static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_
 static unsigned long currentMillis = 0;
 static unsigned long previousMillis = 0;
 static unsigned long previousDisplayMillis = 0;
-static bool cleared = false;
 
 bool receivedUniverses[UNIVERSE_COUNT] = {
     false,
@@ -166,7 +165,6 @@ void handleData(unsigned int universe, uint8_t *data, unsigned int dataSize) {
 void clearReceivedUniverses() {
     for (auto &receivedUniverse : receivedUniverses)
         receivedUniverse = false;
-    cleared = true;
 
     // these are not connected
     receivedUniverses[10] = true;
@@ -253,7 +251,6 @@ void loop() {
                 LOGLN_DEBUG(packetSize);
                 artnetDMXReceived(packetBuffer, packetSize); // process data function
                 previousMillis = millis();
-                cleared = false;
                 receivedStuffNow = true;
             } else
                 LOGLN_DEBUG("not artnet");
@@ -269,13 +266,6 @@ void loop() {
         receivedStuff = false;
         leds.show();
     }
-//    if (!cleared)
-//    {
-//        if (millis() - previousMillis > 1000)
-//        {
-//            clearReceivedUniverses();
-//        }
-//    }
 //    int currentTime = millis();
 //    if (currentTime - previousDisplayMillis > 40) // 25 fps
 //    {

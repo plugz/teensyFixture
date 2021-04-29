@@ -77,7 +77,8 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 #define CHANNELS_PER_UNIVERSE (LEDS_PER_UNIVERSE * 3)
 
 // enter desired universe and subnet  (artnet first universe is 0)
-#define DMX_SUBNET 0
+// subnet is +1 every 16 universes
+// #define DMX_SUBNET 0
 #define DMX_UNIVERSE (0 + CTRL_NUMBER * UNIVERSE_COUNT) //**Start** universe
 
 static EthernetUDP udp;

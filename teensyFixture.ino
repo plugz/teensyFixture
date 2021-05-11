@@ -32,11 +32,11 @@ namespace std {
 #include <array>
 #include <vector>
 
-//#include "Button.hpp"
-//#include "Fader.hpp"
-//#include "InputMCPSPI.hpp"
-//#include "MyMCP3008.hpp"
-//#include "Translate.hpp"
+#include "Button.hpp"
+#include "Fader.hpp"
+#include "InputMCPSPI.hpp"
+#include "MyMCP3008.hpp"
+#include "Translate.hpp"
 #include "Utils.hpp"
 #include "RGBEffectWrapper.hpp"
 
@@ -66,6 +66,12 @@ void flashLeds() {
 }
 
 static void btnCallback(uint8_t idx, bool val) {
+    if (idx == 0 && val) {
+        rgbEffect.nextMode();
+    }
+    else if (idx == 1 && val) {
+        rgbEffect.nextColor();
+    }
 }
 
 static void faderCallback(uint8_t idx, uint16_t val) {
@@ -75,12 +81,12 @@ void setup() {
     LOGSETUP();
 
     LOGLN_DEBUG("setup");
-//    SPI.begin();
-//    InputMCPSPI::setup();
-//    MyMCP3008::setup();
-//    Button::setup(btnCallback);
-//    Fader::setup(faderCallback);
-//    Translate::setup();
+    SPI.begin();
+    InputMCPSPI::setup();
+    MyMCP3008::setup();
+    Button::setup(btnCallback);
+    Fader::setup(faderCallback);
+    Translate::setup();
 
     leds.begin();
     rgbEffect.begin(drawingMemory, NUM_LEDS);
@@ -91,9 +97,9 @@ void setup() {
 }
 
 void loop() {
-//    InputMCPSPI::loop();
-//    Button::loop(); // InputMCP.update should run before so values are updated
-//    Fader::loop();
+    InputMCPSPI::loop();
+    Button::loop(); // InputMCP.update should run before so values are updated
+    Fader::loop();
 
     if (rgbEffect.refreshPixels(millis())) {
         for (unsigned int i = 0; i < NUM_LEDS; ++i) {

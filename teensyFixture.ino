@@ -8,6 +8,19 @@
 // Please configure your Lighting product to use Unicast to the IP the device is given from your
 // DHCP server Multicast is not currently supported due to bandwidth/processor limitations
 
+// fix undefined reference blabla
+extern "C" {
+    int getpid() { return -1; }
+    int _kill(int, int) { return -1; }
+}
+namespace std {
+    void __throw_bad_alloc() {
+        while (1);
+    }
+    void __throw_length_error(char* const) {
+    }
+}
+
 #include "Log.hpp"
 
 // clang-format off
@@ -24,6 +37,7 @@
 #include "MyMCP3008.hpp"
 #include "Translate.hpp"
 #include "Utils.hpp"
+#include "RGBEffectWrapper.hpp"
 
 /// DONT CHANGE unless you know the consequences...
 // 60leds*5m
@@ -35,7 +49,9 @@
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS];
 uint8_t drawingMemory[3 * NUM_LEDS];
 
-static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_GRB | WS2811_800kHz);
+static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, nullptr, WS2811_GRB | WS2811_800kHz);
+
+RGBEffectWrapper rgbEffect;
 
 void flashLeds() {
     for (std::array<int, 3> const &color :
@@ -66,6 +82,7 @@ void setup() {
     Translate::setup();
 
     leds.begin();
+    rgbEffect.begin(drawingMemory, NUM_LEDS);
     LOGLN_DEBUG("setup done");
 
     // Once the Ethernet is initialised, run a test on the LEDs
@@ -80,6 +97,11 @@ void loop() {
     // 50fps au pif
     static TimerMillis refreshTimer(1000 / 50);
     if (refreshTimer.advance()) {
+        rgbEffect.refreshPixels(millis());
+        for (unsigned int i = 0; i < NUM_LEDS; ++i) {
+            leds.setPixel(i, drawingMemory[i * 3 + 0], drawingMemory[i * 3 + 1],
+                          drawingMemory[i * 3 + 2]);
+        }
         leds.show();
     }
 }

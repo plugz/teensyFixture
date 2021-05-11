@@ -52,6 +52,7 @@ RGBEffect::PosArray RGBEffect::posArraySimple(unsigned int width, unsigned int h
     PosArray posArray;
     posArray.width = width;
     posArray.height = height;
+    posArray.array.reserve(width * height);
     for (unsigned int i = 0; i < width * height; ++i)
         posArray.array.emplace_back(i);
     return posArray;
@@ -62,6 +63,7 @@ RGBEffect::PosArray RGBEffect::posArrayZigZag(unsigned int width, unsigned int h
     PosArray posArray;
     posArray.width = width;
     posArray.height = height;
+    posArray.array.reserve(width * height);
     for (unsigned int i = 0; i < width * height; ++i)
     {
         if ((i / width) % 2)
@@ -86,6 +88,7 @@ RGBEffect::PosArray RGBEffect::posArrayFromLedArray(std::vector<int> const& ledA
     }
     const int ledCount = ledMax + 1;
 
+    posArray.array.reserve(ledCount);
     for (int i = 0; i < ledCount; ++i)
     {
         auto ledArrayIt = std::find(std::begin(ledArray), std::end(ledArray), i);

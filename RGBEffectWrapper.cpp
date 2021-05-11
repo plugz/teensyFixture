@@ -222,17 +222,10 @@ void RGBEffectWrapper::begin()
     unsigned int idx = 0;
     for (auto& effectDesc : sEffects[_currentEffectsIdx].effects)
     {
-        LOG_VERBOSE("idx=");
-        LOG_VERBOSE(idx, DEC);
-        LOGLN_VERBOSE();
+        LOGLN_VERBOSE("idx=%u", idx);
         unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size());
 
-        LOG_VERBOSE("colorIdx=");
-        LOG_VERBOSE(colorIdx, DEC);
-        LOGLN_VERBOSE();
-        LOG_VERBOSE("_currentColorsIdx=");
-        LOG_VERBOSE(_currentColorsIdx, DEC);
-        LOGLN_VERBOSE();
+        LOGLN_VERBOSE("colorIdx=%u, _currentColorsIdx=%u", colorIdx, _currentColorsIdx);
         _currentEffects.push_back({});
 
         LOGLN_VERBOSE("begincurrentEffect");

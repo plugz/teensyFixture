@@ -17,7 +17,7 @@ namespace std {
     void __throw_bad_alloc() {
         while (1);
     }
-    void __throw_length_error(char* const) {
+    void __throw_length_error(char const*) {
     }
 }
 
@@ -31,11 +31,11 @@ namespace std {
 #include <array>
 #include <vector>
 
-#include "Button.hpp"
-#include "Fader.hpp"
-#include "InputMCPSPI.hpp"
-#include "MyMCP3008.hpp"
-#include "Translate.hpp"
+//#include "Button.hpp"
+//#include "Fader.hpp"
+//#include "InputMCPSPI.hpp"
+//#include "MyMCP3008.hpp"
+//#include "Translate.hpp"
 #include "Utils.hpp"
 #include "RGBEffectWrapper.hpp"
 
@@ -74,12 +74,12 @@ void setup() {
     LOGSETUP();
 
     LOGLN_DEBUG("setup");
-    SPI.begin();
-    InputMCPSPI::setup();
-    MyMCP3008::setup();
-    Button::setup(btnCallback);
-    Fader::setup(faderCallback);
-    Translate::setup();
+//    SPI.begin();
+//    InputMCPSPI::setup();
+//    MyMCP3008::setup();
+//    Button::setup(btnCallback);
+//    Fader::setup(faderCallback);
+//    Translate::setup();
 
     leds.begin();
     rgbEffect.begin(drawingMemory, NUM_LEDS);
@@ -90,9 +90,9 @@ void setup() {
 }
 
 void loop() {
-    InputMCPSPI::loop();
-    Button::loop(); // InputMCP.update should run before so values are updated
-    Fader::loop();
+//    InputMCPSPI::loop();
+//    Button::loop(); // InputMCP.update should run before so values are updated
+//    Fader::loop();
 
     // 50fps au pif
     static TimerMillis refreshTimer(1000 / 50);
@@ -100,7 +100,7 @@ void loop() {
         rgbEffect.refreshPixels(millis());
         for (unsigned int i = 0; i < NUM_LEDS; ++i) {
             leds.setPixel(i, drawingMemory[i * 3 + 0], drawingMemory[i * 3 + 1],
-                          drawingMemory[i * 3 + 2]);
+                    drawingMemory[i * 3 + 2]);
         }
         leds.show();
     }

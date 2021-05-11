@@ -76,7 +76,7 @@ class RGBEffect
   public:
     struct PosArray
     {
-        std::vector<int> array;
+        unsigned int *array;//std::vector<int> array;
         unsigned int width;
         unsigned int height;
     };
@@ -85,15 +85,15 @@ class RGBEffect
                RGBEffectMixingMode mixingMode,
                uint8_t *pixels,
                unsigned int pixelCount,
-               PosArray const& posArray = {{}, 0, 0});
-    static PosArray posArraySimple(unsigned int width, unsigned int height);
-    static PosArray posArrayZigZag(unsigned int width, unsigned int height);
-    static PosArray posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height);
+               PosArray const& posArray);
+    //static PosArray posArraySimple(unsigned int width, unsigned int height);
+    //static PosArray posArrayZigZag(unsigned int width, unsigned int height);
+    //static PosArray posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height);
 
     void setPattern(RGBEffectPattern pattern);
     void setColor(RGBEffectColor color);
     void setMixingMode(RGBEffectMixingMode mixingMode);
-    void setPosArray(PosArray const& posArray);
+    //void setPosArray(PosArray const& posArray);
     int loopTime() const;
     void setLoopTime(int loopTime);
     bool refreshPixels(unsigned long currentMillis);

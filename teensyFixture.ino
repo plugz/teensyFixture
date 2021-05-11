@@ -18,6 +18,7 @@ namespace std {
         while (1);
     }
     void __throw_length_error(char const*) {
+        while (1);
     }
 }
 
@@ -94,10 +95,7 @@ void loop() {
 //    Button::loop(); // InputMCP.update should run before so values are updated
 //    Fader::loop();
 
-    // 50fps au pif
-    static TimerMillis refreshTimer(1000 / 50);
-    if (refreshTimer.advance()) {
-        rgbEffect.refreshPixels(millis());
+    if (rgbEffect.refreshPixels(millis())) {
         for (unsigned int i = 0; i < NUM_LEDS; ++i) {
             leds.setPixel(i, drawingMemory[i * 3 + 0], drawingMemory[i * 3 + 1],
                     drawingMemory[i * 3 + 2]);

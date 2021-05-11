@@ -8,7 +8,7 @@
 class RGBEffectWrapper
 {
 public:
-    static const RGBEffect::PosArray posArray;
+//    static const RGBEffect::PosArray posArray;
 
 public:
     void begin(uint8_t* pixels, int pixelCount);

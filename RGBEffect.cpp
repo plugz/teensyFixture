@@ -39,71 +39,71 @@ void RGBEffect::begin(RGBEffectPattern pattern,
     _pixels = pixels;
     _pixelCount = pixelCount;
 
-    if (!posArray.array.empty())
-        _posArray = posArray;
-    else
-        _posArray = posArraySimple(pixelCount, 1);
+//    if (!posArray.array.empty())
+    _posArray = posArray;
+//    else
+//        _posArray = posArraySimple(pixelCount, 1);
 
     beginCurrentCombo();
 }
 
-RGBEffect::PosArray RGBEffect::posArraySimple(unsigned int width, unsigned int height)
-{
-    PosArray posArray;
-    posArray.width = width;
-    posArray.height = height;
-    posArray.array.reserve(width * height);
-    for (unsigned int i = 0; i < width * height; ++i)
-        posArray.array.emplace_back(i);
-    return posArray;
-}
-
-RGBEffect::PosArray RGBEffect::posArrayZigZag(unsigned int width, unsigned int height)
-{
-    PosArray posArray;
-    posArray.width = width;
-    posArray.height = height;
-    posArray.array.reserve(width * height);
-    for (unsigned int i = 0; i < width * height; ++i)
-    {
-        if ((i / width) % 2)
-            posArray.array.emplace_back((i / width) * width + ((width - 1) - (i % width)));
-        else
-            posArray.array.emplace_back(i);
-    }
-    return posArray;
-}
-
-RGBEffect::PosArray RGBEffect::posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height)
-{
-    PosArray posArray;
-    posArray.width = width;
-    posArray.height = height;
-
-    int ledMax = 0;
-    for (auto led : ledArray)
-    {
-        if (led > ledMax)
-            ledMax = led;
-    }
-    const int ledCount = ledMax + 1;
-
-    posArray.array.reserve(ledCount);
-    for (int i = 0; i < ledCount; ++i)
-    {
-        auto ledArrayIt = std::find(std::begin(ledArray), std::end(ledArray), i);
-        if (ledArrayIt != std::end(ledArray))
-        {
-            posArray.array.emplace_back(ledArrayIt - std::begin(ledArray));
-        }
-        else
-        {
-            posArray.array.emplace_back(0);
-        }
-    }
-
-    return posArray;
-}
+//RGBEffect::PosArray RGBEffect::posArraySimple(unsigned int width, unsigned int height)
+//{
+//    PosArray posArray;
+//    posArray.width = width;
+//    posArray.height = height;
+//    posArray.array.reserve(width * height);
+//    for (unsigned int i = 0; i < width * height; ++i)
+//        posArray.array.emplace_back(i);
+//    return posArray;
+//}
+//
+//RGBEffect::PosArray RGBEffect::posArrayZigZag(unsigned int width, unsigned int height)
+//{
+//    PosArray posArray;
+//    posArray.width = width;
+//    posArray.height = height;
+//    posArray.array.reserve(width * height);
+//    for (unsigned int i = 0; i < width * height; ++i)
+//    {
+//        if ((i / width) % 2)
+//            posArray.array.emplace_back((i / width) * width + ((width - 1) - (i % width)));
+//        else
+//            posArray.array.emplace_back(i);
+//    }
+//    return posArray;
+//}
+//
+//RGBEffect::PosArray RGBEffect::posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height)
+//{
+//    PosArray posArray;
+//    posArray.width = width;
+//    posArray.height = height;
+//
+//    int ledMax = 0;
+//    for (auto led : ledArray)
+//    {
+//        if (led > ledMax)
+//            ledMax = led;
+//    }
+//    const int ledCount = ledMax + 1;
+//
+//    posArray.array.reserve(ledCount);
+//    for (int i = 0; i < ledCount; ++i)
+//    {
+//        auto ledArrayIt = std::find(std::begin(ledArray), std::end(ledArray), i);
+//        if (ledArrayIt != std::end(ledArray))
+//        {
+//            posArray.array.emplace_back(ledArrayIt - std::begin(ledArray));
+//        }
+//        else
+//        {
+//            posArray.array.emplace_back(0);
+//        }
+//    }
+//
+//    return posArray;
+//}
 
 void RGBEffect::setPattern(RGBEffectPattern pattern)
 {
@@ -173,10 +173,10 @@ void RGBEffect::setMixingMode(RGBEffectMixingMode mixingMode)
     }
 }
 
-void RGBEffect::setPosArray(PosArray const& posArray)
-{
-    _posArray = posArray;
-}
+//void RGBEffect::setPosArray(PosArray const& posArray)
+//{
+//    _posArray = posArray;
+//}
 
 int RGBEffect::loopTime() const
 {

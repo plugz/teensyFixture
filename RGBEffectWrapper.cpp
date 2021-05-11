@@ -8,9 +8,10 @@
 #define NUM_STRIPS 8
 #define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 
-const RGBEffect::PosArray RGBEffectWrapper::posArray =
-/**/
-    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, NUM_STRIPS);
+//const RGBEffect::PosArray RGBEffectWrapper::posArray =
+///**/
+//    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);
+//    RGBEffect::posArraySimple(60, 1);//NUM_STRIPS);
 /**/
 /** /
     RGBEffect::posArrayFromLedArray({// Fairy Wings V3
@@ -121,6 +122,15 @@ EffectComboDesc sEffects[] = {
             {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
         }
     },
+    {
+        {
+            {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::REPLACE, 1700},
+            {RGBEffectPattern::STRIPE_H_LEFT_RIGHT, RGBEffectMixingMode::MAX, 4800}
+        },
+        {
+            {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
+        }
+    },
 };
 
 struct ColorComboDesc
@@ -211,8 +221,17 @@ void RGBEffectWrapper::nextMode()
     begin();
 }
 
+unsigned int posArrayArray[NUM_LEDS] = {0,};
+RGBEffect::PosArray posArray = {0,};
+
 void RGBEffectWrapper::begin()
 {
+    posArray.width = NUM_LEDS_PER_STRIP;
+    posArray.height = NUM_STRIPS;
+    posArray.array = posArrayArray;
+    for (unsigned int i = 0; i < NUM_LEDS; ++i)
+        posArray.array[i] = i;
+
     LOGLN_VERBOSE("begin 2");
     _currentEffects.clear();
     _currentStrobeEffects.clear();

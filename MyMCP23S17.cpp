@@ -4,17 +4,14 @@
 
 #include <Arduino.h>
 
-static uint8_t s_haenEnabledCSPins[SPI_WIRES_COUNT][256] = {
-    {0,}
-};
+static uint8_t s_haenEnabledCSPins[256] = {0,};
 
 MyMCP23S17::MyMCP23S17(){
 
 }
 
 
-void MyMCP23S17::setup(uint8_t spiIdx, uint8_t csPin, uint8_t haenAdrs){
-    _spiIdx = spiIdx;
+void MyMCP23S17::setup(uint8_t csPin, uint8_t haenAdrs){
 	_cs = csPin;
 	if (haenAdrs > 7)
         haenAdrs = 7;
@@ -30,7 +27,7 @@ void MyMCP23S17::begin() {
 	digitalWrite(_cs, HIGH);
 	delay(100);
 	
-    if (!s_haenEnabledCSPins[_spiIdx][_cs])
+    if (!s_haenEnabledCSPins[_cs])
     {
         // See https://www.electro-tech-online.com/threads/how-to-init-multiple-mcp23s17.126668/
         // -> Send message to set IOCON.HAEN (0bxxxxXxxx) to 1
@@ -40,14 +37,14 @@ void MyMCP23S17::begin() {
         // on the same spi wire, 8 MCP23S17 per CS pin.
         for (uint8_t tempAddr : {0, 4})
         {
-            LOGLN_DEBUG("set HAEN on wire %u on csPin %u on addr %u",
-                    unsigned(_spiIdx), unsigned(_cs), unsigned(tempAddr));
+            LOGLN_DEBUG("set HAEN on csPin %u on addr %u",
+                     unsigned(_cs), unsigned(tempAddr));
             MyMCP23S17 temp;
-            temp.setup(_spiIdx, _cs, tempAddr);
+            temp.setup(_cs, tempAddr);
             temp._GPIOwriteByte(MCP23S17_IOCON, 0b00101000);
         }
 
-        s_haenEnabledCSPins[_spiIdx][_cs] = true;
+        s_haenEnabledCSPins[_cs] = true;
     }
 	_gpioDirection = 0xFFFF;//all in
 	_gpioState = 0xFFFF;//all low 
@@ -57,8 +54,8 @@ void MyMCP23S17::begin() {
 
 uint16_t MyMCP23S17::gpioReadAddress(uint8_t addr){
 	_GPIOstartSend(1);
-	spi_wires[_spiIdx]->transfer(addr);
-	uint16_t temp = spi_wires[_spiIdx]->transfer16(0x0);
+	SPI.transfer(addr);
+	uint16_t temp = SPI.transfer16(0x0);
 	_GPIOendSend();
 	return temp;
 }
@@ -153,8 +150,8 @@ int MyMCP23S17::gpioDigitalReadFast(uint8_t pin){
 uint8_t MyMCP23S17::gpioRegisterReadByte(uint8_t reg){
   uint8_t data = 0;
     _GPIOstartSend(1);
-    spi_wires[_spiIdx]->transfer(reg);
-    data = spi_wires[_spiIdx]->transfer(0);
+    SPI.transfer(reg);
+    data = SPI.transfer(0);
     _GPIOendSend();
   return data;
 }
@@ -162,8 +159,8 @@ uint8_t MyMCP23S17::gpioRegisterReadByte(uint8_t reg){
 uint16_t MyMCP23S17::gpioRegisterReadWord(uint8_t reg){
   uint16_t data = 0;
     _GPIOstartSend(1);
-    spi_wires[_spiIdx]->transfer(reg);
-    data = spi_wires[_spiIdx]->transfer16(0);
+    SPI.transfer(reg);
+    data = SPI.transfer16(0);
     _GPIOendSend();
   return data;
 }
@@ -173,9 +170,9 @@ void MyMCP23S17::gpioRegisterWriteByte(uint8_t reg,uint8_t data,bool both){
 		_GPIOwriteByte(reg,(uint8_t)data);
 	} else {
 		_GPIOstartSend(0);
-		spi_wires[_spiIdx]->transfer(reg);
-		spi_wires[_spiIdx]->transfer(data);
-		spi_wires[_spiIdx]->transfer(data);
+		SPI.transfer(reg);
+		SPI.transfer(data);
+		SPI.transfer(data);
 		_GPIOendSend();
 	}
 }

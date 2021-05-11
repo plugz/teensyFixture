@@ -24,11 +24,10 @@ class MyMCP3008 {
   public:
     static void setup();
 
-    void begin(uint8_t spiWire, uint8_t csPin);
+    void begin(uint8_t csPin);
     int readADC(uint8_t channel);
 
   private:
-    uint8_t _spiWire;
     uint8_t _cs;
 };
 

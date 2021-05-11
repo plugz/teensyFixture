@@ -9,21 +9,25 @@
 class Fader
 {
 public:
-    static void setup();
+    // idx, value
+    using Callback = void (*)(uint8_t, uint16_t);
+
+public:
+    static void setup(Callback cb);
     static void loop();
 
-    void setupSingle(uint16_t idx, uint16_t midiIdx, uint8_t mcpIdx, uint8_t pin);
+    void setupSingle(uint8_t idx, uint8_t mcpIdx, uint8_t pin);
     void loopSingle();
 
 private:
+    static Callback _callback;
     ExternalResponsiveAnalogRead _smoothener;
-    uint16_t _idx;
-    uint16_t _midiIdx;
+    uint8_t _idx;
     uint8_t _mcpIdx;
     uint8_t _pin;
-    uint8_t _currentMidiValue = 0;
-    bool _hasToSendMidiValue = false;
-    TimerMillis _midiTimer = 10; // 100Hz midi update freq
+    uint16_t _currentValue = 0;
+    bool _hasToSendValue = false;
+    TimerMillis _timer = 10; // 100Hz fader update freq
 };
 
 extern Fader faders[];

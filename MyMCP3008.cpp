@@ -12,7 +12,7 @@
 ****************************************************/
 
 #include "MyMCP3008.hpp"
-#include "MySPI.hpp"
+#include <SPI.h>
 #include "Translate.hpp"
 
 #include <Arduino.h>
@@ -31,15 +31,13 @@ void MyMCP3008::setup()
     for (auto& myMCP3008: myMCP3008s)
     {
         myMCP3008.begin(
-                Translate::MCP3008IdxToSPIWireIdx(idx),
                 Translate::MCP3008IdxToCSPin(idx));
         ++idx;
     }
 }
 
 // Initialize for hardware SPI
-void MyMCP3008::begin(uint8_t spiWire, uint8_t csPin) {
-  _spiWire = spiWire;
+void MyMCP3008::begin(uint8_t csPin) {
   _cs = csPin;
 
   pinMode(_cs, OUTPUT);
@@ -55,14 +53,14 @@ int MyMCP3008::readADC(uint8_t channel) {
       (1 << 15) // single mode
       | ((channel & 0x7) << 12); // channel
   
-    spi_wires[_spiWire]->beginTransaction(SPISettings(MCP3008_SPI_MAX, MCP3008_SPI_ORDER, MCP3008_SPI_MODE));
+    SPI.beginTransaction(SPISettings(MCP3008_SPI_MAX, MCP3008_SPI_ORDER, MCP3008_SPI_MODE));
     digitalWrite(_cs, LOW);
   
-    spi_wires[_spiWire]->transfer(command0);
-    uint16_t raw = spi_wires[_spiWire]->transfer16(command1);
+    SPI.transfer(command0);
+    uint16_t raw = SPI.transfer16(command1);
   
     digitalWrite(_cs, HIGH);
-    spi_wires[_spiWire]->endTransaction();
+    SPI.endTransaction();
   
     return raw & 0x3FF;
 }

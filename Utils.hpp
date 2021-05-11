@@ -5,11 +5,6 @@
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(*array))
 
-// Same as MCP3008
-#define ANALOG_RESOLUTION 10
-#define ANALOG_VALUECOUNT (1 << ANALOG_RESOLUTION)
-#define ANALOG_VALUEMAX (ANALOG_VALUECOUNT - 1)
-
 using Micros = decltype(micros());
 using Millis = decltype(millis());
 

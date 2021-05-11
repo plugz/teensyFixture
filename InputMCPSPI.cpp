@@ -5,7 +5,7 @@
 
 // TODO move this to Translate.[ch]pp
 static uint8_t INPUTMCPSPI_ADDRESSES[INPUTMCPSPI_COUNT] = {
-    0, 1, 2, 3,
+    0
 };
 
 InputMCPSPI inputMCPSPIs[INPUTMCPSPI_COUNT];
@@ -17,7 +17,6 @@ void InputMCPSPI::setup()
     {
         inputMCPSPI.setupSingle(
                 idx,
-                Translate::inputMCPSPIIdxToSPIWireIdx(idx),
                 Translate::inputMCPSPIIdxToCSPin(idx),
                 INPUTMCPSPI_ADDRESSES[idx]);
         ++idx;
@@ -34,13 +33,12 @@ void InputMCPSPI::loop()
 
 void InputMCPSPI::setupSingle(
         uint8_t idx,
-        uint8_t spiWire,
         uint8_t spiCsPin,
         uint8_t spiAddress)
 {
     _idx = idx;
 
-    MyMCP23S17::setup(spiWire, spiCsPin, spiAddress);
+    MyMCP23S17::setup(spiCsPin, spiAddress);
     begin();
     portPullup(0xFFFF);
 

@@ -13,7 +13,6 @@ public:
 
     void setupSingle(
             uint8_t idx,
-            uint8_t spiWire,
             uint8_t spiCsPin,
             uint8_t spiAddress);
     void loopSingle();

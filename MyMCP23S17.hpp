@@ -75,7 +75,7 @@ const static uint8_t			MCP23S17_INTCAP = 	0x10;
 const static uint8_t			MCP23S17_GPIO = 	0x12;
 const static uint8_t			MCP23S17_OLAT = 	0x14;
 
-#include "MySPI.hpp" //this chip needs SPI
+#include <SPI.h> //this chip needs SPI
 
 const static uint32_t _MCPMaxSpeed = 10000000UL;
 
@@ -114,7 +114,7 @@ public:
     // spiIdx is idx of spi wire
     // csPin is select pin
     // addr is 0-7
-	void 			setup(uint8_t spiIdx, uint8_t csPin, uint8_t haenAdrs);//used with other libraries only
+	void 			setup(uint8_t csPin, uint8_t haenAdrs);//used with other libraries only
 
 	void 			begin();
     
@@ -146,9 +146,9 @@ protected:
 	
 	inline __attribute__((always_inline))
 	void _GPIOstartSend(bool mode) {
-	spi_wires[_spiIdx]->beginTransaction(SPISettings(_MCPMaxSpeed, MSBFIRST, SPI_MODE0));
+	SPI.beginTransaction(SPISettings(_MCPMaxSpeed, MSBFIRST, SPI_MODE0));
 		digitalWrite(_cs, LOW);
-		mode == 1 ? spi_wires[_spiIdx]->transfer(_readCmd) : spi_wires[_spiIdx]->transfer(_writeCmd);
+		mode == 1 ? SPI.transfer(_readCmd) : SPI.transfer(_writeCmd);
 	}
 	
 	
@@ -156,28 +156,27 @@ protected:
 	void _GPIOendSend(void){
 		digitalWrite(_cs, HIGH);
 
-		spi_wires[_spiIdx]->endTransaction();
+		SPI.endTransaction();
 	}
 	
 	inline __attribute__((always_inline))
 	void _GPIOwriteByte(uint8_t addr, uint8_t data){
 		_GPIOstartSend(0);
-		spi_wires[_spiIdx]->transfer(addr);
-		spi_wires[_spiIdx]->transfer(data);
+		SPI.transfer(addr);
+		SPI.transfer(data);
 		_GPIOendSend();
 	}
 	
 	inline __attribute__((always_inline))
 	void _GPIOwriteWord(uint8_t addr, uint16_t data){
 		_GPIOstartSend(0);
-		spi_wires[_spiIdx]->transfer(addr);
-		spi_wires[_spiIdx]->transfer16(data);
+		SPI.transfer(addr);
+		SPI.transfer16(data);
 		_GPIOendSend();
 	}
 	
 	
 private:
-    uint8_t _spiIdx;
     uint8_t 		_cs;
 	uint8_t 		_adrs;
 

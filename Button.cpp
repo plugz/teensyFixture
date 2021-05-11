@@ -1,22 +1,22 @@
 #include "Button.hpp"
 #include "InputMCPSPI.hpp"
 #include "Log.hpp"
-#include "Midi.hpp"
 #include "Translate.hpp"
 #include "Utils.hpp"
 
 #include <core_pins.h>
 
 Button buttons[BUTTON_COUNT];
+Button::Callback Button::_callback = nullptr;
 
-void Button::setup()
+void Button::setup(Callback cb)
 {
+    _callback = cb;
     unsigned int i = 0;
     for (auto& button: buttons)
     {
         button.setupSingle(
                 i,
-                Translate::buttonIdxToMidiIdx(i),
                 Translate::buttonIdxToMCPIdx(i),
                 Translate::buttonIdxToMCPPin(i));
         ++i;
@@ -32,13 +32,11 @@ void Button::loop()
 }
 
 void Button::setupSingle(
-        uint16_t idx,
-        uint16_t midiIdx,
+        uint8_t idx,
         uint8_t mcp,
         uint8_t pin)
 {
     _idx = idx;
-    _midiIdx = midiIdx;
     _mcp = mcp;
     _pin = pin;
 
@@ -55,6 +53,6 @@ void Button::loopSingle()
         bool value = !_debouncer.read();
         LOGLN_VERBOSE("button changed: btn=%u, val=%u",
                 unsigned(_idx), unsigned(value));
-        Midi::sendMessage(_midiIdx, value ? 127 : 0);
+        _callback(_idx, value);
     }
 }

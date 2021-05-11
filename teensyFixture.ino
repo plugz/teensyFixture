@@ -62,7 +62,7 @@
 // Set a different MAC address for each...
 byte mac[] = {0x74, 0x69, 0x69, 0x2D, 0x30, 0x15 + CTRL_NUMBER};
 // IP address of ethernet shield
-static const IPAddress ip(192, 168, 2, 2 + CTRL_NUMBER);
+static const IPAddress ip(192, 168, 51, 200 + CTRL_NUMBER);
 #define ETHERNET_BUFFER 636 // 540
 static unsigned char packetBuffer[ETHERNET_BUFFER];
 
@@ -79,7 +79,7 @@ static unsigned char packetBuffer[ETHERNET_BUFFER];
 // enter desired universe and subnet  (artnet first universe is 0)
 // subnet is +1 every 16 universes
 // #define DMX_SUBNET 0
-#define DMX_UNIVERSE (0 + CTRL_NUMBER * UNIVERSE_COUNT) //**Start** universe
+#define DMX_UNIVERSE (32 + CTRL_NUMBER * UNIVERSE_COUNT) //**Start** universe
 
 static EthernetUDP udp;
 

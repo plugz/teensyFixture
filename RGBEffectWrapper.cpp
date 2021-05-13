@@ -8,7 +8,12 @@
 #define NUM_STRIPS 8
 #define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 
-//const RGBEffect::PosArray RGBEffectWrapper::posArray =
+int posArrayBufferArray[NUM_LEDS] = {0,};
+StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
+
+const RGBEffect::PosArray RGBEffectWrapper::posArray =
+    RGBEffect::posArraySimple(posArrayBuffer, NUM_LEDS_PER_STRIP, NUM_STRIPS);
+
 ///**/
 //    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);
 //    RGBEffect::posArraySimple(60, 1);//NUM_STRIPS);
@@ -82,123 +87,141 @@ struct EffectDesc
 
 struct EffectComboDesc
 {
-    std::vector<EffectDesc> effects;
-    std::vector<EffectDesc> strobeEffects;
+    StaticVector<EffectDesc> effects;
+    StaticVector<EffectDesc> strobeEffects;
 };
 
-EffectComboDesc sEffects[] = {
-    {
-        {
-            {RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000}
-        },
-        {
-            {RGBEffectPattern::STROBE, RGBEffectMixingMode::MAX, 160}
-        }
-    },
-    {
-        {
-            {RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000},
-            {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::SUB, 1700}
-        },
-        {
-            {RGBEffectPattern::SMOOTHER_ON_OFF, RGBEffectMixingMode::MAX, 160}
-        }
-    },
-    {
-        {
-            {RGBEffectPattern::ROTATION_SMOOTH, RGBEffectMixingMode::ADD, 1700},
-            {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::SUB, 1500}
-        },
-        {
-            {RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}
-        }
-    },
-    {
-        {
-            {RGBEffectPattern::STRIPE_SMOOTH_V_DOWN_UP, RGBEffectMixingMode::REPLACE, 1700},
-            {RGBEffectPattern::STRIPE_V_DOWN_UP, RGBEffectMixingMode::MAX, 1200}
-        },
-        {
-            {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
-        }
-    },
-    {
-        {
-            {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::REPLACE, 1700},
-            {RGBEffectPattern::STRIPE_H_LEFT_RIGHT, RGBEffectMixingMode::MAX, 4800}
-        },
-        {
-            {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
-        }
-    },
+EffectDesc plasmaEffectArray[] = {
+    {RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000}
 };
+EffectDesc plasmaStrobeEffectArray[] = {
+    {RGBEffectPattern::STROBE, RGBEffectMixingMode::MAX, 160}
+};
+StaticVector<EffectDesc> plasmaEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+
+StaticVector<EffectDesc> plasmaStrobeEffect{plasmaStrobeEffectArray,
+                                            ARRAY_COUNT(plasmaStrobeEffectArray)};
+
+EffectDesc plasmaStripeEffectArray[] = {
+    {RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000},
+    {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::SUB, 1700}
+};
+EffectDesc plasmaStripeStrobeEffectArray[] = {
+    {RGBEffectPattern::SMOOTHER_ON_OFF, RGBEffectMixingMode::MAX, 160}
+};
+StaticVector<EffectDesc> plasmaStripeEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+
+StaticVector<EffectDesc> plasmaStripeStrobeEffect{plasmaStrobeEffectArray,
+                                            ARRAY_COUNT(plasmaStripeStrobeEffectArray)};
+
+EffectDesc rotateEffectArray[] = {
+    {RGBEffectPattern::ROTATION_SMOOTH, RGBEffectMixingMode::ADD, 1700},
+    {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::SUB, 1500}
+};
+EffectDesc rotateStrobeEffectArray[] = {
+    {RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}
+};
+StaticVector<EffectDesc> rotateEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+
+StaticVector<EffectDesc> rotateStrobeEffect{plasmaStrobeEffectArray,
+                                            ARRAY_COUNT(rotateStrobeEffectArray)};
+
+EffectDesc upDownEffectArray[] = {
+    {RGBEffectPattern::STRIPE_SMOOTH_V_DOWN_UP, RGBEffectMixingMode::REPLACE, 1700},
+    {RGBEffectPattern::STRIPE_V_DOWN_UP, RGBEffectMixingMode::MAX, 1200}
+};
+EffectDesc upDownStrobeEffectArray[] = {
+    {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
+};
+StaticVector<EffectDesc> upDownEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+
+StaticVector<EffectDesc> upDownStrobeEffect{plasmaStrobeEffectArray,
+                                            ARRAY_COUNT(upDownStrobeEffectArray)};
+
+EffectDesc leftRightEffectArray[] = {
+    {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::REPLACE, 1700},
+    {RGBEffectPattern::STRIPE_H_LEFT_RIGHT, RGBEffectMixingMode::MAX, 4800}
+};
+EffectDesc leftRightStrobeEffectArray[] = {
+    {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
+};
+StaticVector<EffectDesc> leftRightEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+
+StaticVector<EffectDesc> leftRightStrobeEffect{plasmaStrobeEffectArray,
+                                            ARRAY_COUNT(leftRightStrobeEffectArray)};
+
+EffectComboDesc sEffectsArray[] = {{plasmaEffect, plasmaStrobeEffect},
+                                   {plasmaStripeEffect, plasmaStrobeEffect},
+                                   {rotateEffect, plasmaStrobeEffect},
+                                   {upDownEffect, plasmaStrobeEffect},
+                                   {leftRightEffect, plasmaStrobeEffect}};
+
+StaticVector<EffectComboDesc> sEffects{sEffectsArray, ARRAY_COUNT(sEffectsArray)};
 
 struct ColorComboDesc
 {
-    std::vector<RGBEffectColor> colors;
-    std::vector<RGBEffectColor> strobeColors;
+    StaticVector<RGBEffectColor> colors;
+    StaticVector<RGBEffectColor> strobeColors;
 };
 
-ColorComboDesc sColors[] = {
-    {
-        {
+RGBEffectColor whiteColorArray[] = {RGBEffectColor::WHITE};
+StaticVector<RGBEffectColor> whiteColor{whiteColorArray, ARRAY_COUNT(whiteColorArray)};
+
+RGBEffectColor oceanColorArray[] = {
             RGBEffectColor::OCEAN,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
-    {
-        {
+};
+StaticVector<RGBEffectColor> oceanColor{oceanColorArray, ARRAY_COUNT(oceanColorArray)};
+
+RGBEffectColor flameColorArray[] = {
             RGBEffectColor::FLAME,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
-    {
-        {
+};
+StaticVector<RGBEffectColor> flameColor{flameColorArray, ARRAY_COUNT(flameColorArray)};
+
+RGBEffectColor grassColorArray[] = {
             RGBEffectColor::GRASS,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
-    {
-        {
+};
+StaticVector<RGBEffectColor> grassColor{grassColorArray, ARRAY_COUNT(grassColorArray)};
+
+RGBEffectColor rainbowColorArray[] = {
             RGBEffectColor::RAINBOW,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
-    {
-        {
+};
+StaticVector<RGBEffectColor> rainbowColor{rainbowColorArray, ARRAY_COUNT(rainbowColorArray)};
+
+RGBEffectColor pinkColorArray[] = {
             RGBEffectColor::PINK,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
-    {
-        {
+};
+StaticVector<RGBEffectColor> pinkColor{pinkColorArray, ARRAY_COUNT(pinkColorArray)};
+
+RGBEffectColor goldColorArray[] = {
             RGBEffectColor::GOLD,
             RGBEffectColor::WHITE
-        },
-        {
-            RGBEffectColor::WHITE
-        }
-    },
 };
+StaticVector<RGBEffectColor> goldColor{goldColorArray, ARRAY_COUNT(goldColorArray)};
+
+ColorComboDesc sColorsArray[] = {
+    {oceanColor, whiteColor},
+    {flameColor, whiteColor},
+    {grassColor, whiteColor},
+    {rainbowColor, whiteColor},
+    {pinkColor, whiteColor},
+    {goldColor, whiteColor}
+};
+StaticVector<ColorComboDesc> sColors{sColorsArray, ARRAY_COUNT(sColorsArray)};
 
 void RGBEffectWrapper::begin(uint8_t* pixels, int pixelCount)
 {
     LOGLN_VERBOSE("begin 1");
+
+    static RGBEffect currentEffectsBuffer[16];
+    _currentEffects.data = currentEffectsBuffer;
+    static RGBEffect currentStrobeEffectsBuffer[16];
+    _currentStrobeEffects.data = currentStrobeEffectsBuffer;
+
     _pixels = pixels;
     _pixelCount = pixelCount;
     begin();
@@ -216,36 +239,26 @@ void RGBEffectWrapper::stopFlash()
 
 void RGBEffectWrapper::nextMode()
 {
-    _currentEffectsIdx = (_currentEffectsIdx + 1) % (sizeof(sEffects) / sizeof(*sEffects));
+    _currentEffectsIdx = (_currentEffectsIdx + 1) % (sEffects.size);
 
     begin();
 }
 
-unsigned int posArrayArray[NUM_LEDS] = {0,};
-RGBEffect::PosArray posArray = {0,};
-
 void RGBEffectWrapper::begin()
 {
-    posArray.width = NUM_LEDS_PER_STRIP;
-    posArray.height = NUM_STRIPS;
-    posArray.array = posArrayArray;
-    for (unsigned int i = 0; i < NUM_LEDS; ++i)
-        posArray.array[i] = i;
-
     LOGLN_VERBOSE("begin 2");
-    _currentEffects.clear();
-    _currentStrobeEffects.clear();
-
+    _currentEffects.size = 0;
+    _currentStrobeEffects.size = 0;
 
     LOGLN_VERBOSE("start effects");
     unsigned int idx = 0;
     for (auto& effectDesc : sEffects[_currentEffectsIdx].effects)
     {
         LOGLN_VERBOSE("idx=%u", idx);
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size());
+        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size);
 
         LOGLN_VERBOSE("colorIdx=%u, _currentColorsIdx=%u", colorIdx, _currentColorsIdx);
-        _currentEffects.push_back({});
+        ++_currentEffects.size;
 
         LOGLN_VERBOSE("begincurrentEffect");
         _currentEffects[idx].begin(
@@ -265,9 +278,10 @@ void RGBEffectWrapper::begin()
     idx = 0;
     for (auto& strobeEffectDesc : sEffects[_currentEffectsIdx].strobeEffects)
     {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size());
+        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size);
 
-        _currentStrobeEffects.push_back({});
+        ++_currentStrobeEffects.size;
+
         _currentStrobeEffects[idx].begin(
                 strobeEffectDesc.pattern,
                 sColors[_currentColorsIdx].strobeColors[colorIdx],
@@ -283,19 +297,19 @@ void RGBEffectWrapper::begin()
 
 void RGBEffectWrapper::nextColor()
 {
-    _currentColorsIdx = (_currentColorsIdx + 1) % (sizeof(sColors) / sizeof(*sColors));
+    _currentColorsIdx = (_currentColorsIdx + 1) % (sColors.size);
 
     unsigned int idx = 0;
     for (auto& effect : _currentEffects)
     {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size());
+        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size);
         effect.setColor(sColors[_currentColorsIdx].colors[colorIdx]);
         ++idx;
     }
     idx = 0;
     for (auto& strobeEffect : _currentStrobeEffects)
     {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size());
+        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size);
         strobeEffect.setColor(sColors[_currentColorsIdx].strobeColors[colorIdx]);
         ++idx;
     }

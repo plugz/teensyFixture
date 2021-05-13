@@ -38,72 +38,68 @@ void RGBEffect::begin(RGBEffectPattern pattern,
     setMixingMode(mixingMode);
     _pixels = pixels;
     _pixelCount = pixelCount;
-
-//    if (!posArray.array.empty())
     _posArray = posArray;
-//    else
-//        _posArray = posArraySimple(pixelCount, 1);
 
     beginCurrentCombo();
 }
 
-//RGBEffect::PosArray RGBEffect::posArraySimple(unsigned int width, unsigned int height)
-//{
-//    PosArray posArray;
-//    posArray.width = width;
-//    posArray.height = height;
-//    posArray.array.reserve(width * height);
-//    for (unsigned int i = 0; i < width * height; ++i)
-//        posArray.array.emplace_back(i);
-//    return posArray;
-//}
-//
-//RGBEffect::PosArray RGBEffect::posArrayZigZag(unsigned int width, unsigned int height)
-//{
-//    PosArray posArray;
-//    posArray.width = width;
-//    posArray.height = height;
-//    posArray.array.reserve(width * height);
-//    for (unsigned int i = 0; i < width * height; ++i)
-//    {
-//        if ((i / width) % 2)
-//            posArray.array.emplace_back((i / width) * width + ((width - 1) - (i % width)));
-//        else
-//            posArray.array.emplace_back(i);
-//    }
-//    return posArray;
-//}
-//
-//RGBEffect::PosArray RGBEffect::posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height)
-//{
-//    PosArray posArray;
-//    posArray.width = width;
-//    posArray.height = height;
-//
-//    int ledMax = 0;
-//    for (auto led : ledArray)
-//    {
-//        if (led > ledMax)
-//            ledMax = led;
-//    }
-//    const int ledCount = ledMax + 1;
-//
-//    posArray.array.reserve(ledCount);
-//    for (int i = 0; i < ledCount; ++i)
-//    {
-//        auto ledArrayIt = std::find(std::begin(ledArray), std::end(ledArray), i);
-//        if (ledArrayIt != std::end(ledArray))
-//        {
-//            posArray.array.emplace_back(ledArrayIt - std::begin(ledArray));
-//        }
-//        else
-//        {
-//            posArray.array.emplace_back(0);
-//        }
-//    }
-//
-//    return posArray;
-//}
+RGBEffect::PosArray RGBEffect::posArraySimple(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height)
+{
+    PosArray posArray;
+    posArray.width = width;
+    posArray.height = height;
+    posArray.array = targetBuffer;
+    for (unsigned int i = 0; i < width * height; ++i)
+        posArray.array[i] = i;
+    return posArray;
+}
+
+RGBEffect::PosArray RGBEffect::posArrayZigZag(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height)
+{
+    PosArray posArray;
+    posArray.width = width;
+    posArray.height = height;
+    posArray.array = targetBuffer;
+    for (unsigned int i = 0; i < width * height; ++i)
+    {
+        if ((i / width) % 2)
+            posArray.array[i] = (i / width) * width + ((width - 1) - (i % width));
+        else
+            posArray.array[i] = i;
+    }
+    return posArray;
+}
+
+RGBEffect::PosArray RGBEffect::posArrayFromLedArray(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height, StaticVector<int> const& ledArray)
+{
+    PosArray posArray;
+    posArray.width = width;
+    posArray.height = height;
+    posArray.array = targetBuffer;
+
+    int ledMax = 0;
+    for (auto led : ledArray)
+    {
+        if (led > ledMax)
+            ledMax = led;
+    }
+    const int ledCount = ledMax + 1;
+
+    for (int i = 0; i < ledCount; ++i)
+    {
+        auto ledArrayIt = std::find(ledArray.begin(), ledArray.end(), i);
+        if (ledArrayIt != ledArray.end())
+        {
+            posArray.array[i] = ledArrayIt - ledArray.begin();
+        }
+        else
+        {
+            posArray.array[i] = 0;
+        }
+    }
+
+    return posArray;
+}
 
 void RGBEffect::setPattern(RGBEffectPattern pattern)
 {
@@ -173,10 +169,10 @@ void RGBEffect::setMixingMode(RGBEffectMixingMode mixingMode)
     }
 }
 
-//void RGBEffect::setPosArray(PosArray const& posArray)
-//{
-//    _posArray = posArray;
-//}
+void RGBEffect::setPosArray(PosArray const& posArray)
+{
+    _posArray = posArray;
+}
 
 int RGBEffect::loopTime() const
 {
@@ -281,8 +277,8 @@ std::array<uint8_t, 3> RGBEffect::getGradientColor(double advance)
 {
     auto const& colors = getColor();
 
-    unsigned int const sIdx = (unsigned int)(advance * colors.size()) % colors.size();
-    unsigned int const eIdx = (sIdx + 1) % colors.size();
+    unsigned int const sIdx = (unsigned int)(advance * colors.size) % colors.size;
+    unsigned int const eIdx = (sIdx + 1) % colors.size;
 
     int const sr = colors[sIdx][0];
     int const sg = colors[sIdx][1];
@@ -295,7 +291,7 @@ std::array<uint8_t, 3> RGBEffect::getGradientColor(double advance)
     int const stepG = (eg - sg);
     int const stepB = (eb - sb);
 
-    double const innerAdvance = (advance * colors.size()) - (int)(advance * colors.size());
+    double const innerAdvance = (advance * colors.size) - (int)(advance * colors.size);
 
     int gradR = sr + (stepR * innerAdvance);
     int gradG = sg + (stepG * innerAdvance);
@@ -387,9 +383,10 @@ void RGBEffect::beginCurrentCombo()
     }
 }
 
-std::vector<std::array<uint8_t, 3>> const& RGBEffect::getColor() const
+StaticVector<std::array<uint8_t, 3>> const& RGBEffect::getColor() const
 {
-    static const std::vector<std::array<uint8_t, 3>> flameColors = {
+    // clang-format off
+    static std::array<uint8_t, 3> flameColorsArray[] = {
         {0xff, 0x00, 0x00},
         {0xff, 0x00, 0x00},
         {0x40, 0x00, 0x80},
@@ -398,20 +395,29 @@ std::vector<std::array<uint8_t, 3>> const& RGBEffect::getColor() const
         {0xdf, 0x50, 0x00},
         {0xfe, 0xee, 0x00},
     };
-    static const std::vector<std::array<uint8_t, 3>> grassColors = {
+    static const StaticVector<std::array<uint8_t, 3>> flameColors{flameColorsArray,
+                                                                  ARRAY_COUNT(flameColorsArray)};
+
+    static std::array<uint8_t, 3> grassColorsArray[] = {
         {0x00, 0xff, 0x00},
         {0x00, 0xff, 0x00},
         {0xc7, 0xee, 0x00},
         {0x00, 0xff, 0x00},
-        {0xd3, 0xa1, 0x00},
+        {0xd3, 0xa1, 0x00}
     };
-    static const std::vector<std::array<uint8_t, 3>> rainbowColors = {
+    static const StaticVector<std::array<uint8_t, 3>> grassColors{grassColorsArray,
+                                                                  ARRAY_COUNT(grassColorsArray)};
+
+    static std::array<uint8_t, 3> rainbowColorsArray[] = {
         {0xff, 0x00, 0xff},
         {0xff, 0x00, 0xff},
         {0xff, 0xff, 0x00},
         {0x00, 0xff, 0xff},
     };
-    static const std::vector<std::array<uint8_t, 3>> oceanColors = {
+    static const StaticVector<std::array<uint8_t, 3>> rainbowColors{
+        rainbowColorsArray, ARRAY_COUNT(rainbowColorsArray)};
+
+    static std::array<uint8_t, 3> oceanColorsArray[] = {
         {0x00, 0x00, 0xff},
         {0x00, 0x00, 0xff},
         {0x00, 0x3a, 0xb9},
@@ -419,21 +425,30 @@ std::vector<std::array<uint8_t, 3>> const& RGBEffect::getColor() const
         {0x00, 0x3a, 0xb9},
         {0xee, 0xee, 0xfe},
     };
-    static const std::vector<std::array<uint8_t, 3>> goldColors = {
+    static const StaticVector<std::array<uint8_t, 3>> oceanColors{oceanColorsArray,
+                                                                  ARRAY_COUNT(oceanColorsArray)};
+
+    static std::array<uint8_t, 3> goldColorsArray[] = {
         {0xff, 0xd7, 0x00},
         {0xff, 0xd7, 0x00},
         {0xda, 0xa5, 0x20},
         {0xb8, 0x86, 0x0b},
         {0xee, 0xe8, 0xaa},
     };
-    static const std::vector<std::array<uint8_t, 3>> whiteColors = {
+    static const StaticVector<std::array<uint8_t, 3>> goldColors{goldColorsArray,
+                                                                 ARRAY_COUNT(goldColorsArray)};
+
+    static std::array<uint8_t, 3> whiteColorsArray[] = {
         {0xff, 0xff, 0xff},
         {0xff, 0xff, 0xff},
         {0xef, 0xeb, 0xdd},
         {0xf5, 0xf5, 0xf5},
         {0xf8, 0xf8, 0xff},
     };
-    static const std::vector<std::array<uint8_t, 3>> pinkColors = {
+    static const StaticVector<std::array<uint8_t, 3>> whiteColors{whiteColorsArray,
+                                                                  ARRAY_COUNT(whiteColorsArray)};
+
+    static std::array<uint8_t, 3> pinkColorsArray[] = {
         {0xff, 0x14, 0x93},
         {0xff, 0x14, 0x93},
         {0xff, 0x00, 0xff},
@@ -441,6 +456,9 @@ std::vector<std::array<uint8_t, 3>> const& RGBEffect::getColor() const
         {0xff, 0x69, 0xb4},
         {0xda, 0x70, 0xd6},
     };
+    static const StaticVector<std::array<uint8_t, 3>> pinkColors{pinkColorsArray,
+                                                                 ARRAY_COUNT(pinkColorsArray)};
+    // clang-format on
 
     switch (_color)
     {
@@ -471,7 +489,7 @@ void RGBEffect::refreshPixelsSmoothOnOff()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -491,7 +509,7 @@ void RGBEffect::beginSmootherOnOff()
 
 void RGBEffect::refreshPixelsSmootherOnOff()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = (1.0 + std::sin(double(_prevUpdateMillis * M_PI * 2.0) / double(_loopTime))) / 2.0;
 
     auto const color = getGradientColor(colorAdvance);
@@ -514,10 +532,11 @@ void RGBEffect::beginStrobe()
 
 void RGBEffect::refreshPixelsStrobe()
 {
+    auto const& color = getColor();
     std::array<uint8_t, 3> rgb;
     if ((_prevUpdateMillis / (_loopTime / 2)) % 2)
     {
-        int const colorLoopTime = _loopTime * getColor().size() * 10;
+        int const colorLoopTime = _loopTime * color.size * 10;
         rgb = getGradientColor(double(_prevUpdateMillis % colorLoopTime) / double(colorLoopTime));
     }
     else
@@ -539,7 +558,7 @@ void RGBEffect::refreshPixelsStripe()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -572,7 +591,7 @@ void RGBEffect::refreshPixelsStripeHLeftRight()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -606,7 +625,7 @@ void RGBEffect::refreshPixelsStripeVUpDown()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -640,7 +659,7 @@ void RGBEffect::refreshPixelsStripeRev()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -673,7 +692,7 @@ void RGBEffect::refreshPixelsStripeHRightLeft()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -707,7 +726,7 @@ void RGBEffect::refreshPixelsStripeVDownUp()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -738,7 +757,7 @@ void RGBEffect::beginStripeSmooth()
 
 void RGBEffect::refreshPixelsStripeSmooth()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = advance * _pixelCount;
     auto const color = getGradientColor(colorAdvance);
@@ -780,7 +799,7 @@ void RGBEffect::beginStripeSmoothHLeftRight()
 
 void RGBEffect::refreshPixelsStripeSmoothHLeftRight()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = advance * _posArray.width;
     auto const color = getGradientColor(colorAdvance);
@@ -823,7 +842,7 @@ void RGBEffect::beginStripeSmoothVUpDown()
 
 void RGBEffect::refreshPixelsStripeSmoothVUpDown()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = advance * _posArray.height;
     auto const color = getGradientColor(colorAdvance);
@@ -866,7 +885,7 @@ void RGBEffect::beginStripeSmoothRev()
 
 void RGBEffect::refreshPixelsStripeSmoothRev()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = 1.0 - (advance * _pixelCount);
     auto const color = getGradientColor(colorAdvance);
@@ -908,7 +927,7 @@ void RGBEffect::beginStripeSmoothHRightLeft()
 
 void RGBEffect::refreshPixelsStripeSmoothHRightLeft()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = 1.0 - (advance * _posArray.width);
     auto const color = getGradientColor(colorAdvance);
@@ -951,7 +970,7 @@ void RGBEffect::beginStripeSmoothVDownUp()
 
 void RGBEffect::refreshPixelsStripeSmoothVDownUp()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = 1.0 - (advance * _posArray.height);
     auto const color = getGradientColor(colorAdvance);
@@ -997,7 +1016,7 @@ void RGBEffect::refreshPixelsPingPong()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -1030,7 +1049,7 @@ void RGBEffect::refreshPixelsPingPongH()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -1064,7 +1083,7 @@ void RGBEffect::refreshPixelsPingPongV()
     int colorAdvance = _prevUpdateMillis % _loopTime;
 
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -1095,7 +1114,7 @@ void RGBEffect::beginPingPongSmooth()
 
 void RGBEffect::refreshPixelsPingPongSmooth()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = std::abs(advance * 2 - 1) * _pixelCount;
     auto const color = getGradientColor(colorAdvance);
@@ -1137,7 +1156,7 @@ void RGBEffect::beginPingPongSmoothH()
 
 void RGBEffect::refreshPixelsPingPongSmoothH()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = std::abs(advance * 2 - 1) * _posArray.width;
     auto const color = getGradientColor(colorAdvance);
@@ -1180,7 +1199,7 @@ void RGBEffect::beginPingPongSmoothV()
 
 void RGBEffect::refreshPixelsPingPongSmoothV()
 {
-    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size())) / double(_loopTime * getColor().size());
+    double const colorAdvance =  double(_prevUpdateMillis % (_loopTime * getColor().size)) / double(_loopTime * getColor().size);
     double const advance = double(_prevUpdateMillis % _loopTime) / double(_loopTime);
     double const position = std::abs(advance * 2 - 1) * _posArray.height;
     auto const color = getGradientColor(colorAdvance);
@@ -1224,7 +1243,7 @@ void RGBEffect::beginRotation()
 void RGBEffect::refreshPixelsRotation()
 {
     auto& colors = getColor();
-    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size();
+    int colorIdx = (_prevUpdateMillis / _loopTime) % colors.size;
     int red = colors[colorIdx][0];
     int green = colors[colorIdx][1];
     int blue = colors[colorIdx][2];
@@ -1268,9 +1287,9 @@ void RGBEffect::refreshPixelsRotationSmooth()
 {
     auto const& colors = getColor();
     auto const color = getGradientColor(
-                double(_prevUpdateMillis % (_loopTime * colors.size()))
+                double(_prevUpdateMillis % (_loopTime * colors.size))
                 /
-                double(_loopTime * colors.size())
+                double(_loopTime * colors.size)
                 );
     int red = color[0];
     int green = color[1];
@@ -1311,9 +1330,9 @@ void RGBEffect::refreshPixelsRotationSmoothThin()
 {
     auto const& colors = getColor();
     auto const color = getGradientColor(
-                double(_prevUpdateMillis % (_loopTime * colors.size()))
+                double(_prevUpdateMillis % (_loopTime * colors.size))
                 /
-                double(_loopTime * colors.size())
+                double(_loopTime * colors.size)
                 );
     int red = color[0];
     int green = color[1];

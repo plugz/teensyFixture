@@ -1,9 +1,10 @@
 #ifndef __FIXTURE2_HPP__
 #define __FIXTURE2_HPP__
 
+#include "Utils.hpp"
+
 #include <array>
 #include <cstdint>
-#include <vector>
 
 enum class RGBEffectPattern
 {
@@ -76,7 +77,7 @@ class RGBEffect
   public:
     struct PosArray
     {
-        unsigned int *array;//std::vector<int> array;
+        StaticVector<int> array;
         unsigned int width;
         unsigned int height;
     };
@@ -86,22 +87,23 @@ class RGBEffect
                uint8_t *pixels,
                unsigned int pixelCount,
                PosArray const& posArray);
-    //static PosArray posArraySimple(unsigned int width, unsigned int height);
-    //static PosArray posArrayZigZag(unsigned int width, unsigned int height);
-    //static PosArray posArrayFromLedArray(std::vector<int> const& ledArray, unsigned int width, unsigned int height);
+    static PosArray posArraySimple(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
+    static PosArray posArrayZigZag(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
+    static PosArray posArrayFromLedArray(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height, StaticVector<int> const& ledArray);
 
     void setPattern(RGBEffectPattern pattern);
     void setColor(RGBEffectColor color);
     void setMixingMode(RGBEffectMixingMode mixingMode);
-    //void setPosArray(PosArray const& posArray);
+    void setPosArray(PosArray const& posArray);
     int loopTime() const;
     void setLoopTime(int loopTime);
+
     bool refreshPixels(unsigned long currentMillis);
 
   private:
     std::array<uint8_t, 3> getGradientColor(double advance);
     void beginCurrentCombo();
-    std::vector<std::array<uint8_t, 3>> const& getColor() const;
+    StaticVector<std::array<uint8_t, 3>> const& getColor() const;
     uint8_t* _pixels;
     unsigned int _pixelCount;
     PosArray _posArray;

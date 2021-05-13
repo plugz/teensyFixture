@@ -66,4 +66,21 @@ public:
     }
 };
 
+template<typename T>
+struct StaticVector {
+    explicit StaticVector() : data(nullptr), size(0) {}
+    StaticVector(T* d, size_t s) : data(d), size(s) {}
+    T* data;
+    size_t size;
+    T& operator[](size_t idx) { return data[idx]; }
+    T const& operator[](size_t idx) const { return data[idx]; }
+
+    T* begin() { return data; }
+    T* end() { return data + size; }
+    T const* begin() const { return data; }
+    T const* end() const { return data + size; }
+
+    void clear() { data = nullptr; size = 0; }
+};
+
 #endif

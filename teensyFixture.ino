@@ -8,20 +8,6 @@
 // Please configure your Lighting product to use Unicast to the IP the device is given from your
 // DHCP server Multicast is not currently supported due to bandwidth/processor limitations
 
-// fix undefined reference blabla
-extern "C" {
-    int getpid() { return -1; }
-    int _kill(int, int) { return -1; }
-}
-namespace std {
-    void __throw_bad_alloc() {
-        while (1);
-    }
-    void __throw_length_error(char const*) {
-        while (1);
-    }
-}
-
 #include "Log.hpp"
 
 // clang-format off
@@ -30,7 +16,6 @@ namespace std {
 // clang-format on
 
 #include <array>
-#include <vector>
 
 #include "Button.hpp"
 #include "Fader.hpp"
@@ -55,8 +40,8 @@ static OctoWS2811 leds(NUM_LEDS_PER_STRIP, displayMemory, nullptr, WS2811_GRB | 
 RGBEffectWrapper rgbEffect;
 
 void flashLeds() {
-    for (std::array<int, 3> const &color :
-    std::vector<std::array<int, 3>>{{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 0, 0}})
+    std::array<int, 3> colors[] = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {0, 0, 0}};
+    for (auto const &color : colors)
     {
         for (int i = 0; i < NUM_LEDS_PER_STRIP * NUM_STRIPS; ++i)
             leds.setPixel(i, color[0], color[1], color[2]);

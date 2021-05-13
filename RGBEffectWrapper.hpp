@@ -2,13 +2,14 @@
 #define __RGBEFFECTWRAPPER_HPP__
 
 #include "RGBEffect.hpp"
+#include "Utils.hpp"
 
 #include <cstdint>
 
 class RGBEffectWrapper
 {
 public:
-//    static const RGBEffect::PosArray posArray;
+    static const RGBEffect::PosArray posArray;
 
 public:
     void begin(uint8_t* pixels, int pixelCount);
@@ -24,8 +25,8 @@ private:
     unsigned int _pixelCount;
     int _currentEffectsIdx = 0;
     int _currentColorsIdx = 0;
-    std::vector<RGBEffect> _currentEffects;
-    std::vector<RGBEffect> _currentStrobeEffects;
+    StaticVector<RGBEffect> _currentEffects;
+    StaticVector<RGBEffect> _currentStrobeEffects;
     bool _flashing = false;
 };
 

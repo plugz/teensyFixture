@@ -20,6 +20,7 @@ public:
     bool refreshPixels(unsigned long currentMillis);
 
 private:
+public:
     void begin();
     uint8_t* _pixels;
     unsigned int _pixelCount;

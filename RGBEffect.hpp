@@ -1,6 +1,7 @@
 #ifndef __FIXTURE2_HPP__
 #define __FIXTURE2_HPP__
 
+#include "FakeFloat.hpp"
 #include "Utils.hpp"
 
 #include <array>
@@ -77,6 +78,7 @@ class RGBEffect
   public:
     struct PosArray
     {
+        // -1 means no binding
         StaticVector<int> array;
         unsigned int width;
         unsigned int height;
@@ -101,12 +103,14 @@ class RGBEffect
     bool refreshPixels(unsigned long currentMillis);
 
   private:
-    std::array<uint8_t, 3> getGradientColor(double advance);
+    std::array<uint8_t, 3> getTimeGradientColor(Float timeMultiplier = Float::scaleUp(1));
+    std::array<uint8_t, 3> getGradientColor(Float advance);
     void beginCurrentCombo();
     StaticVector<std::array<uint8_t, 3>> const& getColor() const;
     uint8_t* _pixels;
     unsigned int _pixelCount;
     PosArray _posArray;
+    unsigned long _startTime = 0;
     unsigned long _prevUpdateMillis = 0;
     RGBEffectPattern _pattern;
     RGBEffectColor _color;

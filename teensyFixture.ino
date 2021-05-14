@@ -65,6 +65,8 @@ static void faderCallback(uint8_t idx, uint16_t val) {
 void setup() {
     LOGSETUP();
 
+    Utils::begin();
+
     LOGLN_DEBUG("setup");
     SPI.begin();
     InputMCPSPI::setup();

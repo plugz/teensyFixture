@@ -2,6 +2,31 @@
 #define __UTILS_HPP__
 
 #include <Arduino.h>
+//#include <chrono>
+
+#include "FakeFloat.hpp"
+
+struct Utils {
+    static void begin();
+
+    // input: [0, 1] instead of [0, 2pi]
+    // return: [0, 1] instead of [-1, 1]
+    static Float sin1(Float x);
+    static Float cos1(Float x);
+    // input: [0, 2]
+    static Float sqrt2(Float x);
+};
+
+//static auto millis() {
+//  return std::chrono::duration_cast<std::chrono::milliseconds>(
+//             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
+//      .count();
+//};
+//static auto micros() {
+//  return std::chrono::duration_cast<std::chrono::microseconds>(
+//             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
+//      .count();
+//};
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(*array))
 

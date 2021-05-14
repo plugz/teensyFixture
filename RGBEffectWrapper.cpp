@@ -109,22 +109,32 @@ EffectDesc plasmaStripeEffectArray[] = {
 EffectDesc plasmaStripeStrobeEffectArray[] = {
     {RGBEffectPattern::SMOOTHER_ON_OFF, RGBEffectMixingMode::MAX, 160}
 };
-StaticVector<EffectDesc> plasmaStripeEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+StaticVector<EffectDesc> plasmaStripeEffect{plasmaStripeEffectArray, ARRAY_COUNT(plasmaStripeEffectArray)};
 
-StaticVector<EffectDesc> plasmaStripeStrobeEffect{plasmaStrobeEffectArray,
+StaticVector<EffectDesc> plasmaStripeStrobeEffect{plasmaStripeStrobeEffectArray,
                                             ARRAY_COUNT(plasmaStripeStrobeEffectArray)};
 
 EffectDesc rotateEffectArray[] = {
-    {RGBEffectPattern::ROTATION_SMOOTH, RGBEffectMixingMode::ADD, 1700},
-    {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::SUB, 1500}
+    {RGBEffectPattern::ROTATION, RGBEffectMixingMode::REPLACE, 1700},
+//    {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::MULTIPLY, 1400}
 };
 EffectDesc rotateStrobeEffectArray[] = {
     {RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}
 };
-StaticVector<EffectDesc> rotateEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
-
-StaticVector<EffectDesc> rotateStrobeEffect{plasmaStrobeEffectArray,
+StaticVector<EffectDesc> rotateEffect{rotateEffectArray, ARRAY_COUNT(rotateEffectArray)};
+StaticVector<EffectDesc> rotateStrobeEffect{rotateStrobeEffectArray,
                                             ARRAY_COUNT(rotateStrobeEffectArray)};
+
+EffectDesc rotate2EffectArray[] = {
+    {RGBEffectPattern::ROTATION_SMOOTH, RGBEffectMixingMode::ADD, 1300},
+    {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::SUB, 4000}
+};
+EffectDesc rotate2StrobeEffectArray[] = {
+    {RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}
+};
+StaticVector<EffectDesc> rotate2Effect{rotate2EffectArray, ARRAY_COUNT(rotate2EffectArray)};
+StaticVector<EffectDesc> rotate2StrobeEffect{rotate2StrobeEffectArray,
+                                            ARRAY_COUNT(rotate2StrobeEffectArray)};
 
 EffectDesc upDownEffectArray[] = {
     {RGBEffectPattern::STRIPE_SMOOTH_V_DOWN_UP, RGBEffectMixingMode::REPLACE, 1700},
@@ -133,9 +143,9 @@ EffectDesc upDownEffectArray[] = {
 EffectDesc upDownStrobeEffectArray[] = {
     {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
 };
-StaticVector<EffectDesc> upDownEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+StaticVector<EffectDesc> upDownEffect{upDownEffectArray, ARRAY_COUNT(upDownEffectArray)};
 
-StaticVector<EffectDesc> upDownStrobeEffect{plasmaStrobeEffectArray,
+StaticVector<EffectDesc> upDownStrobeEffect{upDownStrobeEffectArray,
                                             ARRAY_COUNT(upDownStrobeEffectArray)};
 
 EffectDesc leftRightEffectArray[] = {
@@ -145,16 +155,17 @@ EffectDesc leftRightEffectArray[] = {
 EffectDesc leftRightStrobeEffectArray[] = {
     {RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}
 };
-StaticVector<EffectDesc> leftRightEffect{plasmaEffectArray, ARRAY_COUNT(plasmaEffectArray)};
+StaticVector<EffectDesc> leftRightEffect{leftRightEffectArray, ARRAY_COUNT(leftRightEffectArray)};
 
-StaticVector<EffectDesc> leftRightStrobeEffect{plasmaStrobeEffectArray,
+StaticVector<EffectDesc> leftRightStrobeEffect{leftRightStrobeEffectArray,
                                             ARRAY_COUNT(leftRightStrobeEffectArray)};
 
 EffectComboDesc sEffectsArray[] = {{plasmaEffect, plasmaStrobeEffect},
-                                   {plasmaStripeEffect, plasmaStrobeEffect},
-                                   {rotateEffect, plasmaStrobeEffect},
-                                   {upDownEffect, plasmaStrobeEffect},
-                                   {leftRightEffect, plasmaStrobeEffect}};
+                                   {plasmaStripeEffect, plasmaStripeStrobeEffect},
+                                   {rotateEffect, rotateStrobeEffect},
+                                   {rotate2Effect, rotate2StrobeEffect},
+                                   {upDownEffect, upDownStrobeEffect},
+                                   {leftRightEffect, leftRightStrobeEffect}};
 
 StaticVector<EffectComboDesc> sEffects{sEffectsArray, ARRAY_COUNT(sEffectsArray)};
 
@@ -204,9 +215,9 @@ RGBEffectColor goldColorArray[] = {
 StaticVector<RGBEffectColor> goldColor{goldColorArray, ARRAY_COUNT(goldColorArray)};
 
 ColorComboDesc sColorsArray[] = {
-    {oceanColor, whiteColor},
-    {flameColor, whiteColor},
-    {grassColor, whiteColor},
+//    {oceanColor, whiteColor},
+//    {flameColor, whiteColor},
+//    {grassColor, whiteColor},
     {rainbowColor, whiteColor},
     {pinkColor, whiteColor},
     {goldColor, whiteColor}

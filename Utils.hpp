@@ -2,7 +2,11 @@
 #define __UTILS_HPP__
 
 #include <Arduino.h>
-//#include <chrono>
+#include <chrono>
+#include <initializer_list>
+#include <array>
+
+//#include <iostream>
 
 #include "FakeFloat.hpp"
 
@@ -12,21 +16,25 @@ struct Utils {
     // input: [0, 1] instead of [0, 2pi]
     // return: [0, 1] instead of [-1, 1]
     static Float sin1(Float x);
-    static Float cos1(Float x);
+    //static Float cos1(Float x);
+    // input: [0, 1]
+    // output: [0, 1]
+    static Float asin1(Float x);
+    //static Float acos1(Float x);
     // input: [0, 2]
     static Float sqrt2(Float x);
 };
 
-//static auto millis() {
-//  return std::chrono::duration_cast<std::chrono::milliseconds>(
-//             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
-//      .count();
-//};
-//static auto micros() {
-//  return std::chrono::duration_cast<std::chrono::microseconds>(
-//             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
-//      .count();
-//};
+static auto milliss() {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(
+             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
+      .count();
+};
+static auto micross() {
+  return std::chrono::duration_cast<std::chrono::microseconds>(
+             std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
+      .count();
+};
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(*array))
 
@@ -91,10 +99,18 @@ public:
     }
 };
 
-template<typename T>
-struct StaticVector {
-    explicit StaticVector() : data(nullptr), size(0) {}
-    StaticVector(T* d, size_t s) : data(d), size(s) {}
+template <typename T> struct StaticVector {
+    StaticVector()
+        : data(nullptr)
+        , size(0) {
+        }
+
+    StaticVector(T* d, size_t s)
+        : data(d)
+        , size(s) {
+        }
+
+
     T* data;
     size_t size;
     T& operator[](size_t idx) { return data[idx]; }
@@ -105,7 +121,39 @@ struct StaticVector {
     T const* begin() const { return data; }
     T const* end() const { return data + size; }
 
-    void clear() { data = nullptr; size = 0; }
+    void clear() {
+        data = nullptr;
+        size = 0;
+    }
+};
+
+struct EffectDesc;
+struct EffectComboDesc;
+
+//template<typename T> std::ostream& operator <<(std::ostream& s, StaticVector<T> const& v) {
+//    return s << (void*)v.data << "." << v.size;
+//}
+
+// with memory
+template <typename T, size_t TMemorySize> struct StaticVector2 : public StaticVector<T> {
+
+    StaticVector2()
+        : StaticVector<T>() {
+        }
+
+    StaticVector2(std::initializer_list<T> list) : StaticVector<T>() {
+
+        // static memory
+        static std::array<T, TMemorySize> memory{};
+        static T* nextMemory = memory.data();
+
+        StaticVector<T>::data = nextMemory;
+        StaticVector<T>::size = list.size();
+
+        for (auto const& listElement : list) {
+            *nextMemory++ = listElement;
+        }
+    }
 };
 
 #endif

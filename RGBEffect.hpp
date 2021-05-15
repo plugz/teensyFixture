@@ -12,22 +12,16 @@ enum class RGBEffectPattern
     SMOOTH_ON_OFF,
     SMOOTHER_ON_OFF,
     STROBE,
-    STRIPE,
     STRIPE_H_LEFT_RIGHT,
     STRIPE_V_UP_DOWN,
-    STRIPE_REV,
     STRIPE_H_RIGHT_LEFT,
     STRIPE_V_DOWN_UP,
-    STRIPE_SMOOTH,
     STRIPE_SMOOTH_H_LEFT_RIGHT,
     STRIPE_SMOOTH_V_UP_DOWN,
-    STRIPE_SMOOTH_REV,
     STRIPE_SMOOTH_H_RIGHT_LEFT,
     STRIPE_SMOOTH_V_DOWN_UP,
-    PING_PONG,
     PING_PONG_H,
     PING_PONG_V,
-    PING_PONG_SMOOTH,
     PING_PONG_SMOOTH_H,
     PING_PONG_SMOOTH_V,
     ROTATION,
@@ -76,6 +70,8 @@ enum class RGBEffectMixingMode
 class RGBEffect
 {
   public:
+    using Color = std::array<uint8_t, 3>;
+
     struct PosArray
     {
         // -1 means no binding
@@ -103,6 +99,7 @@ class RGBEffect
     bool refreshPixels(unsigned long currentMillis);
 
   private:
+    Float advance() const; // advance in loop, [0-1]
     std::array<uint8_t, 3> getTimeGradientColor(Float timeMultiplier = Float::scaleUp(1));
     std::array<uint8_t, 3> getGradientColor(Float advance);
     void beginCurrentCombo();
@@ -130,20 +127,12 @@ class RGBEffect
     void refreshPixelsStrobe();
 
     // stripe
-    void beginStripe();
-    void refreshPixelsStripe();
-
-    // stripe
     void beginStripeHLeftRight();
     void refreshPixelsStripeHLeftRight();
 
     // stripe
     void beginStripeVUpDown();
     void refreshPixelsStripeVUpDown();
-
-    // stripe
-    void beginStripeRev();
-    void refreshPixelsStripeRev();
 
     // stripe
     void beginStripeHRightLeft();
@@ -154,20 +143,12 @@ class RGBEffect
     void refreshPixelsStripeVDownUp();
 
     // stripe smooth
-    void beginStripeSmooth();
-    void refreshPixelsStripeSmooth();
-
-    // stripe smooth
     void beginStripeSmoothHLeftRight();
     void refreshPixelsStripeSmoothHLeftRight();
 
     // stripe smooth
     void beginStripeSmoothVUpDown();
     void refreshPixelsStripeSmoothVUpDown();
-
-    // stripe smooth
-    void beginStripeSmoothRev();
-    void refreshPixelsStripeSmoothRev();
 
     // stripe smooth
     void beginStripeSmoothHRightLeft();
@@ -177,21 +158,13 @@ class RGBEffect
     void beginStripeSmoothVDownUp();
     void refreshPixelsStripeSmoothVDownUp();
 
-    // ping pong (single pixel)
-    void beginPingPong();
-    void refreshPixelsPingPong();
-
-    // ping pong (single pixel)
+    // ping pong
     void beginPingPongH();
     void refreshPixelsPingPongH();
 
-    // ping pong (single pixel)
+    // ping pong
     void beginPingPongV();
     void refreshPixelsPingPongV();
-
-    // ping pong smooth
-    void beginPingPongSmooth();
-    void refreshPixelsPingPongSmooth();
 
     // ping pong smooth
     void beginPingPongSmoothH();

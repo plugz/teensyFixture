@@ -4,6 +4,16 @@
 #include <cstdint>
 //#include <iostream>
 
+#ifdef abs
+#undef abs
+#endif
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
 template <typename TType, int TPrecisionBits> struct FakeFloat {
     static constexpr int TPrecisionValue = 1 << TPrecisionBits;
     static constexpr int TPrecisionMask = TPrecisionValue - 1;
@@ -48,6 +58,14 @@ FakeFloat<T, TPrec> operator*(int left, FakeFloat<T, TPrec> right) {
     return right * left;
 }
 
-using Float = FakeFloat<int32_t, 11>;
+namespace std {
+template <typename T, int TPrec> FakeFloat<T, TPrec> abs(FakeFloat<T, TPrec> const& left) {
+    if (left.value >= 0)
+        return left;
+    return FakeFloat<T, TPrec>{-left.value};
+}
+} // namespace std
+
+using Float = FakeFloat<int32_t, 10>;
 
 #endif

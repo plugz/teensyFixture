@@ -1,5 +1,5 @@
 // SimplexNoise1234
-// Copyright © 2003-2011, Stefan Gustavson
+// Copyright Â© 2003-2011, Stefan Gustavson
 //
 // Contact: stegu@itn.liu.se
 //
@@ -369,7 +369,7 @@ Float SimplexNoise1234::noise(Float x, Float y, Float z, Float w) {
     // To find out which of the 24 possible simplices we're in, we need to
     // determine the magnitude ordering of x0, y0, z0 and w0.
     // The method below is a good way of finding the ordering of x,y,z,w and
-    // then find the correct traversal order for the simplex we’re in.
+    // then find the correct traversal order for the simplex weÂ’re in.
     // First, six pair-wise comparisons are performed between each possible pair
     // of the four coordinates, and the results are used to add up binary bits
     // for an integer index.

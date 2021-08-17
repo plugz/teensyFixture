@@ -4,15 +4,15 @@
 
 #define MYMIN(x, y) ((x) < (y) ? (x) : (y))
 
-#define NUM_LEDS_PER_STRIP 60
-#define NUM_STRIPS (8*5)
+#define NUM_LEDS_PER_STRIP 120
+#define NUM_STRIPS (8)
 #define NUM_LEDS (NUM_LEDS_PER_STRIP * NUM_STRIPS) // can not go higher than this - Runs out of SRAM
 
 int posArrayBufferArray[NUM_LEDS] = {0};
 StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
 
 const RGBEffect::PosArray RGBEffectWrapper::posArray =
-    RGBEffect::posArraySimple(posArrayBuffer, NUM_LEDS_PER_STRIP, NUM_STRIPS);
+    RGBEffect::posArrayAirDJ(posArrayBuffer, NUM_LEDS_PER_STRIP, NUM_STRIPS);
 
 ///**/
 //    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);

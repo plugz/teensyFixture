@@ -104,6 +104,22 @@ RGBEffect::PosArray RGBEffect::posArrayFromLedArray(StaticVector<int>& targetBuf
     return posArray;
 }
 
+RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height)
+{
+    PosArray posArray;
+    posArray.width = width;
+    posArray.height = height;
+    posArray.array = targetBuffer;
+    for (unsigned int i = 0; i < width * height; ++i)
+    {
+        if ((i / width) % 2)
+            posArray.array[i] = (i / width) * width + ((width - 1) - (i % width));
+        else
+            posArray.array[i] = i;
+    }
+    return posArray;
+}
+
 void RGBEffect::setPattern(RGBEffectPattern pattern)
 {
     _pattern = pattern;

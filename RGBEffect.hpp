@@ -88,6 +88,7 @@ class RGBEffect
     static PosArray posArraySimple(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
     static PosArray posArrayZigZag(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
     static PosArray posArrayFromLedArray(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height, StaticVector<int> const& ledArray);
+    static PosArray posArrayAirDJ(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
 
     void setPattern(RGBEffectPattern pattern);
     void setColor(RGBEffectColor color);

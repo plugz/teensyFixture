@@ -27,7 +27,7 @@
 
 /// DONT CHANGE unless you know the consequences...
 // 60leds*5m
-#define NUM_LEDS_PER_STRIP 300
+#define NUM_LEDS_PER_STRIP 120
 #define NUM_STRIPS 8
 #define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 
@@ -51,10 +51,10 @@ void flashLeds() {
 }
 
 static void btnCallback(uint8_t idx, bool val) {
-    if (idx == 0 && val) {
+    if (((idx & 1) == 0) && val) {
         rgbEffect.nextMode();
     }
-    else if (idx == 1 && val) {
+    else if (((idx & 1) == 1) && val) {
         rgbEffect.nextColor();
     }
 }

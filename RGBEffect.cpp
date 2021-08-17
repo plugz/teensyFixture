@@ -112,8 +112,42 @@ RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer) {
     posArray.height = 120;
     posArray.depth = 60;
     posArray.array = targetBuffer;
-    for (unsigned int i = 0; i < 120 * 8; ++i)
+    //
+    for (unsigned int i = 120 * 0; i < 120 * 1; ++i) {
         posArray.array[i] = i;
+    }
+    //
+    for (unsigned int i = 120 * 1; i < 120 * 2; ++i) {
+        posArray.array[i] = i;
+    }
+    //
+    for (unsigned int i = 120 * 2; i < 120 * 3; ++i) {
+        posArray.array[i] = i;
+    }
+    //
+    for (unsigned int i = 120 * 3; i < 120 * 4; ++i) {
+        posArray.array[i] = i;
+    }
+    // poto jardin loin
+    for (unsigned int i = 120 * 4; i < 120 * 5; ++i) {
+        unsigned int j = i - 120 * 4;
+        posArray.array[i] = 0 + 180 * j + 180 * 120 * 59;
+    }
+    // poto cour loin
+    for (unsigned int i = 120 * 5; i < 120 * 6; ++i) {
+        unsigned int j = i - 120 * 4;
+        posArray.array[i] = 179 + 180 * j + 180 * 120 * 59;
+    }
+    // poto cour proche
+    for (unsigned int i = 120 * 6; i < 120 * 7; ++i) {
+        unsigned int j = i - 120 * 4;
+        posArray.array[i] = 179 + 180 * j + 180 * 120 * 0;
+    }
+    // poto jardin proche
+    for (unsigned int i = 120 * 7; i < 120 * 8; ++i) {
+        unsigned int j = i - 120 * 4;
+        posArray.array[i] = 0 + 180 * j + 180 * 120 * 0;
+    }
     return posArray;
 }
 

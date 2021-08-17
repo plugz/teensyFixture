@@ -12,19 +12,10 @@ enum class RGBEffectPattern
     SMOOTH_ON_OFF,
     SMOOTHER_ON_OFF,
     STROBE,
-    STRIPE_H_LEFT_RIGHT,
-    STRIPE_V_UP_DOWN,
-    STRIPE_H_RIGHT_LEFT,
-    STRIPE_V_DOWN_UP,
-    STRIPE_SMOOTH_H_LEFT_RIGHT,
-    STRIPE_SMOOTH_V_UP_DOWN,
-    STRIPE_SMOOTH_H_RIGHT_LEFT,
-    STRIPE_SMOOTH_V_DOWN_UP,
-    PING_PONG_H,
-    PING_PONG_V,
-    PING_PONG_SMOOTH_H,
-    PING_PONG_SMOOTH_V,
+    STRIPE,
+    STRIPE_SMOOTH,
     ROTATION,
+    ROTATION_THIN,
     ROTATION_SMOOTH,
     ROTATION_SMOOTH_THIN,
     PLASMA,
@@ -67,40 +58,76 @@ enum class RGBEffectMixingMode
     COUNT,
 };
 
+enum class RGBEffectAxis
+{
+    HORIZONTAL,
+    VERTICAL,
+    FRONTAL,
+};
+
+enum class RGBEffectDirection
+{
+    FORWARD,
+    BACKWARD,
+    PING_PONG,
+};
+
 class RGBEffect
 {
   public:
     using Color = std::array<uint8_t, 3>;
 
+    struct PatternDesc {
+        RGBEffectPattern pattern;
+        RGBEffectAxis axis = RGBEffectAxis::HORIZONTAL;
+        RGBEffectDirection direction = RGBEffectDirection::FORWARD;
+    };
+    struct Desc {
+        PatternDesc pattern;
+        int loopTime;
+        RGBEffectMixingMode mixingMode = RGBEffectMixingMode::REPLACE;
+        RGBEffectColor color = RGBEffectColor::RAINBOW;
+    };
     struct PosArray
     {
         // -1 means no binding
         StaticVector<int> array;
         unsigned int width;
         unsigned int height;
+        unsigned int depth;
     };
-    void begin(RGBEffectPattern pattern,
-               RGBEffectColor color,
-               RGBEffectMixingMode mixingMode,
+    void begin(Desc const& desc,
                uint8_t *pixels,
                unsigned int pixelCount,
                PosArray const& posArray);
-    static PosArray posArraySimple(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
-    static PosArray posArrayZigZag(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
-    static PosArray posArrayFromLedArray(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height, StaticVector<int> const& ledArray);
-    static PosArray posArrayAirDJ(StaticVector<int>& targetBuffer, unsigned int width, unsigned int height);
+    static PosArray posArraySimple(StaticVector<int>& targetBuffer, unsigned int width,
+                                   unsigned int height, unsigned int depth);
+    static PosArray posArrayZigZag(StaticVector<int>& targetBuffer, unsigned int width,
+                                   unsigned int height, unsigned int depth);
+    static PosArray posArrayFromLedArray(StaticVector<int>& targetBuffer, unsigned int width,
+                                         unsigned int height, unsigned int depth,
+                                         StaticVector<int> const& ledArray);
+    static PosArray posArrayAirDJ(StaticVector<int>& targetBuffer);
 
     void setPattern(RGBEffectPattern pattern);
-    void setColor(RGBEffectColor color);
+    void setAxis(RGBEffectAxis axis);
+    void setDirection(RGBEffectDirection direction);
     void setMixingMode(RGBEffectMixingMode mixingMode);
-    void setPosArray(PosArray const& posArray);
     int loopTime() const;
     void setLoopTime(int loopTime);
+    void setColor(RGBEffectColor color);
+    void setPosArray(PosArray const& posArray);
 
     bool refreshPixels(unsigned long currentMillis);
 
   private:
     Float advance() const; // advance in loop, [0-1]
+    unsigned int axisSize() const;
+    unsigned int perpendicularW() const;
+    unsigned int perpendicularH() const;
+    unsigned int idxToAxisIdx(unsigned int idx) const;
+    unsigned int idxToPerpendicularX(unsigned int idx) const;
+    unsigned int idxToPerpendicularY(unsigned int idx) const;
     std::array<uint8_t, 3> getTimeGradientColor(Float timeMultiplier = Float::scaleUp(1));
     std::array<uint8_t, 3> getGradientColor(Float advance);
     void beginCurrentCombo();
@@ -110,10 +137,7 @@ class RGBEffect
     PosArray _posArray;
     unsigned long _startTime = 0;
     unsigned long _prevUpdateMillis = 0;
-    RGBEffectPattern _pattern;
-    RGBEffectColor _color;
-    RGBEffectMixingMode _mixingMode;
-    int _loopTime = 8000;
+    Desc _desc;
 
     // smooth on-off
     void beginSmoothOnOff();
@@ -128,56 +152,20 @@ class RGBEffect
     void refreshPixelsStrobe();
 
     // stripe
-    void beginStripeHLeftRight();
-    void refreshPixelsStripeHLeftRight();
-
-    // stripe
-    void beginStripeVUpDown();
-    void refreshPixelsStripeVUpDown();
-
-    // stripe
-    void beginStripeHRightLeft();
-    void refreshPixelsStripeHRightLeft();
-
-    // stripe
-    void beginStripeVDownUp();
-    void refreshPixelsStripeVDownUp();
+    void beginStripe();
+    void refreshPixelsStripe();
 
     // stripe smooth
-    void beginStripeSmoothHLeftRight();
-    void refreshPixelsStripeSmoothHLeftRight();
-
-    // stripe smooth
-    void beginStripeSmoothVUpDown();
-    void refreshPixelsStripeSmoothVUpDown();
-
-    // stripe smooth
-    void beginStripeSmoothHRightLeft();
-    void refreshPixelsStripeSmoothHRightLeft();
-
-    // stripe smooth
-    void beginStripeSmoothVDownUp();
-    void refreshPixelsStripeSmoothVDownUp();
-
-    // ping pong
-    void beginPingPongH();
-    void refreshPixelsPingPongH();
-
-    // ping pong
-    void beginPingPongV();
-    void refreshPixelsPingPongV();
-
-    // ping pong smooth
-    void beginPingPongSmoothH();
-    void refreshPixelsPingPongSmoothH();
-
-    // ping pong smooth
-    void beginPingPongSmoothV();
-    void refreshPixelsPingPongSmoothV();
+    void beginStripeSmooth();
+    void refreshPixelsStripeSmooth();
 
     // rotation (2-branch)
     void beginRotation();
     void refreshPixelsRotation();
+
+    // rotation thin (2-branch)
+    void beginRotationThin();
+    void refreshPixelsRotationThin();
 
     // rotation smooth (2-branch)
     void beginRotationSmooth();

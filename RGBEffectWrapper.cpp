@@ -12,7 +12,7 @@ int posArrayBufferArray[NUM_LEDS] = {0};
 StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
 
 const RGBEffect::PosArray RGBEffectWrapper::posArray =
-    RGBEffect::posArrayAirDJ(posArrayBuffer, NUM_LEDS_PER_STRIP, NUM_STRIPS);
+    RGBEffect::posArrayAirDJ(posArrayBuffer);
 
 ///**/
 //    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);
@@ -78,13 +78,7 @@ const RGBEffect::PosArray RGBEffectWrapper::posArray =
         }, 24, 12);
 / **/
 
-struct EffectDesc {
-    RGBEffectPattern pattern;
-    RGBEffectMixingMode mixingMode;
-    int loopTime;
-};
-
-using EffectDescVector = StaticVector2<EffectDesc, 64>;
+using EffectDescVector = StaticVector2<RGBEffect::Desc, 64>;
 
 struct EffectComboDesc {
     EffectDescVector effects;
@@ -96,35 +90,49 @@ using EffectComboDescVector = StaticVector2<EffectComboDesc, 16>;
 // clang-format off
 EffectComboDescVector const sEffects{
     {
-        {{RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000}},
-        {{RGBEffectPattern::STROBE, RGBEffectMixingMode::MAX, 160}}
+        {{{RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE}},
+        {{{RGBEffectPattern::STROBE}, 160, RGBEffectMixingMode::MAX}}
     },
     {
-        {{RGBEffectPattern::PLASMA, RGBEffectMixingMode::REPLACE, 4000},
-         {RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::SUB, 1700}},
-        {{RGBEffectPattern::SMOOTHER_ON_OFF, RGBEffectMixingMode::MAX, 160}}
+        {{{RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::STRIPE_SMOOTH}, 1700, RGBEffectMixingMode::SUB}},
+        {{{RGBEffectPattern::SMOOTHER_ON_OFF}, 160, RGBEffectMixingMode::MAX}}
     },
     {
-        {{RGBEffectPattern::ROTATION, RGBEffectMixingMode::REPLACE, 1700},
-         //{RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::MULTIPLY, 1400}
-         },
-        {{RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}}
+        {{{RGBEffectPattern::ROTATION}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::ROTATION_THIN}, 400, RGBEffectMixingMode::SUB}},
+        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
     },
     {
-        {{RGBEffectPattern::ROTATION_SMOOTH, RGBEffectMixingMode::ADD, 1300},
-         {RGBEffectPattern::ROTATION_SMOOTH_THIN, RGBEffectMixingMode::SUB, 4000}},
-        {{RGBEffectPattern::ROTATION, RGBEffectMixingMode::GRAINMERGE, 400}}
+        {{{RGBEffectPattern::ROTATION, RGBEffectAxis::VERTICAL}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::VERTICAL}, 400, RGBEffectMixingMode::SUB}},
+        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
     },
     {
-        {{RGBEffectPattern::STRIPE_SMOOTH_V_DOWN_UP, RGBEffectMixingMode::REPLACE, 1700},
-         {RGBEffectPattern::STRIPE_V_DOWN_UP, RGBEffectMixingMode::MAX, 1200}},
-        {{RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}}
+        {{{RGBEffectPattern::ROTATION, RGBEffectAxis::FRONTAL}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::FRONTAL}, 400, RGBEffectMixingMode::SUB}},
+        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
     },
     {
-        {{RGBEffectPattern::STRIPE_SMOOTH_H_LEFT_RIGHT, RGBEffectMixingMode::REPLACE, 1700},
-         {RGBEffectPattern::STRIPE_H_LEFT_RIGHT, RGBEffectMixingMode::MAX, 4800}},
-        {{RGBEffectPattern::PING_PONG_SMOOTH_V, RGBEffectMixingMode::MAX, 280}}
-    }
+        {{{RGBEffectPattern::ROTATION_SMOOTH}, 1300, RGBEffectMixingMode::ADD},
+         {{RGBEffectPattern::ROTATION_SMOOTH_THIN}, 4000, RGBEffectMixingMode::SUB}},
+        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
+    },
+    {
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1200, RGBEffectMixingMode::MAX}},
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 280, RGBEffectMixingMode::MAX}}
+    },
+    {
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::STRIPE, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1200, RGBEffectMixingMode::MAX}},
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 280, RGBEffectMixingMode::MAX}}
+    },
+    {
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 1700, RGBEffectMixingMode::REPLACE},
+         {{RGBEffectPattern::STRIPE, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 1200, RGBEffectMixingMode::MAX}},
+        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 280, RGBEffectMixingMode::MAX}}
+    },
 };
 // clang-format on
 
@@ -198,32 +206,28 @@ void RGBEffectWrapper::begin() {
 
     LOGLN_VERBOSE("start effects");
     unsigned int idx = 0;
-    for (auto& effectDesc : sEffects[_currentEffectsIdx].effects) {
+    for (auto effectDesc : sEffects[_currentEffectsIdx].effects) {
         LOGLN_VERBOSE("idx=%u", idx);
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size);
+        unsigned int colorIdx = std::min(idx, sColors[_currentColorsIdx].colors.size);
 
         LOGLN_VERBOSE("colorIdx=%u, _currentColorsIdx=%u", colorIdx, _currentColorsIdx);
         ++_currentEffects.size;
 
+        effectDesc.color = sColors[_currentColorsIdx].colors[colorIdx];
         LOGLN_VERBOSE("begincurrentEffect");
-        _currentEffects[idx].begin(effectDesc.pattern, sColors[_currentColorsIdx].colors[colorIdx],
-                                   effectDesc.mixingMode, _pixels, _pixelCount, posArray);
-        LOGLN_VERBOSE("setLoopTim");
-        _currentEffects[idx].setLoopTime(effectDesc.loopTime);
+        _currentEffects[idx].begin(effectDesc, _pixels, _pixelCount, posArray);
         ++idx;
     }
 
     LOGLN_VERBOSE("start strobe effects");
     idx = 0;
-    for (auto& strobeEffectDesc : sEffects[_currentEffectsIdx].strobeEffects) {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size);
+    for (auto strobeEffectDesc : sEffects[_currentEffectsIdx].strobeEffects) {
+        unsigned int colorIdx = std::min(idx, sColors[_currentColorsIdx].strobeColors.size);
 
         ++_currentStrobeEffects.size;
 
-        _currentStrobeEffects[idx].begin(
-            strobeEffectDesc.pattern, sColors[_currentColorsIdx].strobeColors[colorIdx],
-            strobeEffectDesc.mixingMode, _pixels, _pixelCount, posArray);
-        _currentStrobeEffects[idx].setLoopTime(strobeEffectDesc.loopTime);
+        strobeEffectDesc.color = sColors[_currentColorsIdx].colors[colorIdx];
+        _currentStrobeEffects[idx].begin(strobeEffectDesc, _pixels, _pixelCount, posArray);
         ++idx;
     }
 }

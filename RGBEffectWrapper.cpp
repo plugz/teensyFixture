@@ -193,6 +193,12 @@ void RGBEffectWrapper::startFlash() { _flashing = true; }
 
 void RGBEffectWrapper::stopFlash() { _flashing = false; }
 
+void RGBEffectWrapper::prevMode() {
+    _currentEffectsIdx = (_currentEffectsIdx + (sEffects.size - 1)) % (sEffects.size);
+
+    begin();
+}
+
 void RGBEffectWrapper::nextMode() {
     _currentEffectsIdx = (_currentEffectsIdx + 1) % (sEffects.size);
 
@@ -232,9 +238,19 @@ void RGBEffectWrapper::begin() {
     }
 }
 
+void RGBEffectWrapper::prevColor() {
+    _currentColorsIdx = (_currentColorsIdx + (sColors.size - 1)) % (sColors.size);
+
+    updateColor();
+}
+
 void RGBEffectWrapper::nextColor() {
     _currentColorsIdx = (_currentColorsIdx + 1) % (sColors.size);
 
+    updateColor();
+}
+
+void RGBEffectWrapper::updateColor() {
     unsigned int idx = 0;
     for (auto& effect : _currentEffects) {
         unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size);
@@ -249,16 +265,32 @@ void RGBEffectWrapper::nextColor() {
     }
 }
 
+void RGBEffectWrapper::changeSpeed(Float speed) {
+    _speed = speed;
+}
+
 bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
+    static unsigned long prevMillis = 0;
+    static unsigned long prevEffectMillis = 0;
+
+    // TODO
+//    auto dMillis = Float::scaleUp(currentMillis - prevMillis) * _speed;
+//    unsigned long effectMillis = prevEffectMillis + dMillis.scaleDown();
+    auto dMillis = currentMillis - prevMillis;
+    unsigned long effectMillis = prevEffectMillis + dMillis;
+
     bool ret = false;
 
     for (auto& effect : _currentEffects)
-        ret |= effect.refreshPixels(currentMillis);
+        ret |= effect.refreshPixels(effectMillis);
 
     if (_flashing) {
         for (auto& strobeEffect : _currentStrobeEffects)
-            ret |= strobeEffect.refreshPixels(currentMillis);
+            ret |= strobeEffect.refreshPixels(effectMillis);
     }
+
+    prevMillis = currentMillis;
+    prevEffectMillis = effectMillis;
 
     return ret;
 }

@@ -51,15 +51,46 @@ void flashLeds() {
 }
 
 static void btnCallback(uint8_t idx, bool val) {
-    if (((idx & 1) == 0) && val) {
+    if (!val)
+        return;
+    switch (idx % 4) {
+    case 0:
+    default: {
+        rgbEffect.prevMode();
+    } break;
+    case 1: {
         rgbEffect.nextMode();
-    }
-    else if (((idx & 1) == 1) && val) {
+    } break;
+    case 2: {
+        rgbEffect.prevColor();
+    } break;
+    case 3: {
         rgbEffect.nextColor();
+    } break;
     }
 }
 
 static void faderCallback(uint8_t idx, uint16_t val) {
+    // TODO
+//        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
+//    switch (idx) {
+//    case 0:
+//    default: {
+//        rgbEffect.changeSpeed(Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
+//    } break;
+//    case 1: {
+//        val = 0;
+//    } break;
+//    case 2: {
+//        val = 0;
+//    } break;
+//    case 3: {
+//        val = 0;
+//    } break;
+//    case 4: {
+//        val = 0;
+//    } break;
+//    }
 }
 
 void setup() {

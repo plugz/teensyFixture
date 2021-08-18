@@ -7,6 +7,10 @@
 #include <array>
 #include <cstdint>
 
+#define ADJ_WIDTH 120
+#define ADJ_HEIGHT 60
+#define ADJ_DEPTH 30
+
 enum class RGBEffectPattern
 {
     SMOOTH_ON_OFF,

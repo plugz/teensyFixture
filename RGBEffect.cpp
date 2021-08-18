@@ -106,47 +106,66 @@ RGBEffect::PosArray RGBEffect::posArrayFromLedArray(StaticVector<int>& targetBuf
     return posArray;
 }
 
+
 RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer) {
     PosArray posArray;
-    posArray.width = 180;
-    posArray.height = 120;
-    posArray.depth = 60;
+    posArray.width = ADJ_WIDTH;
+    posArray.height = ADJ_HEIGHT;
+    posArray.depth = ADJ_DEPTH;
     posArray.array = targetBuffer;
-    //
-    for (unsigned int i = 120 * 0; i < 120 * 1; ++i) {
-        posArray.array[i] = i;
+    // tower
+    for (unsigned int i = ADJ_HEIGHT * 0; i < ADJ_HEIGHT * 1; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 0;
+        if (j < 19) {
+            posArray.array[i] = (ADJ_WIDTH - 45 + j) + ADJ_WIDTH * 0 + ADJ_WIDTH * ADJ_HEIGHT * (10 + j / 3);
+        }
+        else if (j < 40) {
+            posArray.array[i] = (ADJ_WIDTH - 45 + j) + ADJ_WIDTH * 8 + ADJ_WIDTH * ADJ_HEIGHT * (10 + j / 3);
+        }
+        else
+            posArray.array[i] = -1;
     }
-    //
-    for (unsigned int i = 120 * 1; i < 120 * 2; ++i) {
-        posArray.array[i] = i;
+    // vtech centre
+    for (unsigned int i = ADJ_HEIGHT * 1; i < ADJ_HEIGHT * 2; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 1;
+        if (j < 30)
+            posArray.array[i] = (ADJ_WIDTH / 2 + 15 - j) + ADJ_WIDTH * 0 + ADJ_WIDTH * ADJ_HEIGHT * 10;
+        else
+            posArray.array[i] = -1;
     }
-    //
-    for (unsigned int i = 120 * 2; i < 120 * 3; ++i) {
+    // fisher price
+    for (unsigned int i = ADJ_HEIGHT * 2; i < ADJ_HEIGHT * 3; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 2;
         posArray.array[i] = i;
+        if (j < 30)
+            posArray.array[i] = (5 + j) + ADJ_WIDTH * 0 + ADJ_WIDTH * ADJ_HEIGHT * (15 - j / 3);
+        else
+            posArray.array[i] = -1;
     }
-    //
-    for (unsigned int i = 120 * 3; i < 120 * 4; ++i) {
-        posArray.array[i] = i;
+    // rien
+    for (unsigned int i = ADJ_HEIGHT * 3; i < ADJ_HEIGHT * 4; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 3;
+        posArray.array[i] = -1;
     }
     // poto jardin loin
-    for (unsigned int i = 120 * 4; i < 120 * 5; ++i) {
-        unsigned int j = i - 120 * 4;
-        posArray.array[i] = 0 + 180 * j + 180 * 120 * 59;
+    for (unsigned int i = ADJ_HEIGHT * 4; i < ADJ_HEIGHT * 5; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 4;
+        posArray.array[i] = 0 + ADJ_WIDTH * j + ADJ_WIDTH * ADJ_HEIGHT * (ADJ_DEPTH - 1);
     }
     // poto cour loin
-    for (unsigned int i = 120 * 5; i < 120 * 6; ++i) {
-        unsigned int j = i - 120 * 4;
-        posArray.array[i] = 179 + 180 * j + 180 * 120 * 59;
+    for (unsigned int i = ADJ_HEIGHT * 5; i < ADJ_HEIGHT * 6; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 5;
+        posArray.array[i] = (ADJ_WIDTH - 1) + ADJ_WIDTH * j + ADJ_WIDTH * ADJ_HEIGHT * (ADJ_DEPTH - 1);
     }
     // poto cour proche
-    for (unsigned int i = 120 * 6; i < 120 * 7; ++i) {
-        unsigned int j = i - 120 * 4;
-        posArray.array[i] = 179 + 180 * j + 180 * 120 * 0;
+    for (unsigned int i = ADJ_HEIGHT * 6; i < ADJ_HEIGHT * 7; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 6;
+        posArray.array[i] = (ADJ_WIDTH - 1) + ADJ_WIDTH * j + ADJ_WIDTH * ADJ_HEIGHT * 0;
     }
     // poto jardin proche
-    for (unsigned int i = 120 * 7; i < 120 * 8; ++i) {
-        unsigned int j = i - 120 * 4;
-        posArray.array[i] = 0 + 180 * j + 180 * 120 * 0;
+    for (unsigned int i = ADJ_HEIGHT * 7; i < ADJ_HEIGHT * 8; ++i) {
+        unsigned int j = i - ADJ_HEIGHT * 7;
+        posArray.array[i] = 0 + ADJ_WIDTH * j + ADJ_WIDTH * ADJ_HEIGHT * 0;
     }
     return posArray;
 }

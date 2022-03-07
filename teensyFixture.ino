@@ -51,6 +51,16 @@ void flashLeds() {
 }
 
 static void btnCallback(uint8_t idx, bool val) {
+    // plaf
+    if (idx == 14) {
+        if (val) {
+            rgbEffect.startFlash();
+        }
+        else {
+            rgbEffect.stopFlash();
+        }
+        return;
+    }
     if (!val)
         return;
     switch (idx % 4) {

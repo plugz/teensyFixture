@@ -7,7 +7,7 @@
 #define MYMCP3008_COUNT 1
 
 // 10 buttons + 4 encoder push buttons
-#define BUTTON_COUNT 16
+#define BUTTON_COUNT 14
 #define ENCODER_COUNT 4
 #define FADER_COUNT 6
 

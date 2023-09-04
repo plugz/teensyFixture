@@ -4,7 +4,7 @@
 #include "Utils.hpp"
 
 static uint8_t s_inputMCPSPIIdxToCSPin[INPUTMCPSPI_COUNT] = {
-    9
+    9, 9
 };
 
 static uint8_t s_MCP3008IdxToCSPin[MYMCP3008_COUNT] = {
@@ -15,29 +15,37 @@ static uint8_t s_MCP3008IdxToCSPin[MYMCP3008_COUNT] = {
 // MCP23S17 usage
 
 static const uint8_t s_buttonIdxToMCPIdx[BUTTON_COUNT] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 static const uint8_t s_buttonIdxToMCPPin[BUTTON_COUNT] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 };
 
 // {PUSH, ROT1, ROT2}
 static const uint8_t s_encoderIdxToMCPIdx[ENCODER_COUNT][3] = {
+    {0, 0, 0},
+    {0, 0, 0},
+    {1, 1, 1},
+    {1, 1, 1},
 };
 
 static const uint8_t s_encoderIdxToMCPPin[ENCODER_COUNT][3] = {
+    {10, 11, 12},
+    {13, 14, 15},
+    {0, 1, 2},
+    {3, 4, 5},
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // MCP3008 usage
 
 static const uint8_t s_faderIdxToMCPIdx[FADER_COUNT] = {
-    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
 };
 
 static const uint8_t s_faderIdxToMCPPin[FADER_COUNT] = {
-    0, 1, 2, 3, 4, 5, 6, 7,
+    0, 1, 2, 3, 4, 5,
 };
 
 void Translate::setup()

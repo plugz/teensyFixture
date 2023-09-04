@@ -5,7 +5,7 @@
 
 // TODO move this to Translate.[ch]pp
 static uint8_t INPUTMCPSPI_ADDRESSES[INPUTMCPSPI_COUNT] = {
-    0
+    0, 1
 };
 
 InputMCPSPI inputMCPSPIs[INPUTMCPSPI_COUNT];

@@ -3,12 +3,12 @@
 
 #include <cstdint>
 
-#define INPUTMCPSPI_COUNT 1
+#define INPUTMCPSPI_COUNT 2
 #define MYMCP3008_COUNT 1
 
-#define BUTTON_COUNT 16
-#define ENCODER_COUNT 0
-#define FADER_COUNT 8
+#define BUTTON_COUNT 10
+#define ENCODER_COUNT 4
+#define FADER_COUNT 6
 
 class Translate
 {

@@ -55,20 +55,16 @@ void Fader::loopSingle()
 
     if (_smoothener.update(readValue))
     {
-        uint16_t value = _smoothener.getValue();
         LOGLN_VERBOSE("fader changed: fader=%u, val=%u",
-                unsigned(_idx), unsigned(value));
-        if (value != _currentValue)
-        {
-            LOGLN_VERBOSE("fader changed: fader=%u, val=%u",
-                    unsigned(_idx), unsigned(value));
-            _currentValue = value;
-            _hasToSendValue = true;
-        }
+                unsigned(_idx), unsigned(_smoothener.getValue()));
+        _currentValue = _smoothener.getValue();
+        _hasToSendValue = true;
     }
 
     if (_hasToSendValue) {
         if (_timer.advance()) {
+            LOGLN_DEBUG("fader send update: fader=%u, val=%u",
+                    unsigned(_idx), unsigned(_currentValue));
             _callback(_idx, _currentValue);
             _timer.reset();
             _hasToSendValue = false;

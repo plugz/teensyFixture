@@ -84,22 +84,22 @@ uint8_t Translate::buttonIdxToMCPPin(uint8_t buttonIdx)
 
 uint8_t Translate::encoderIdxToRot1MCPIdx(uint8_t encoderIdx)
 {
-    return s_encoderIdxToMCPIdx[encoderIdx][1];
+    return s_encoderIdxToMCPIdx[encoderIdx][0];
 }
 
 uint8_t Translate::encoderIdxToRot1MCPPin(uint8_t encoderIdx)
 {
-    return s_encoderIdxToMCPPin[encoderIdx][1];
+    return s_encoderIdxToMCPPin[encoderIdx][0];
 }
 
 uint8_t Translate::encoderIdxToRot2MCPIdx(uint8_t encoderIdx)
 {
-    return s_encoderIdxToMCPIdx[encoderIdx][2];
+    return s_encoderIdxToMCPIdx[encoderIdx][1];
 }
 
 uint8_t Translate::encoderIdxToRot2MCPPin(uint8_t encoderIdx)
 {
-    return s_encoderIdxToMCPPin[encoderIdx][2];
+    return s_encoderIdxToMCPPin[encoderIdx][1];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

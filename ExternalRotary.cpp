@@ -127,13 +127,13 @@ ExternalRotary::ExternalRotary() {
   _state = R_START;
 }
 
-uint8_t ExternalRotary::update(uint8_t val1, uint8_t val2) {
+bool ExternalRotary::update(uint8_t val1, uint8_t val2) {
   // Grab state of input pins.
   uint8_t pinstate = (val2 << 1) | val1;
   // Determine new state from the pins and state table.
   _state = ttable[_state & 0xf][pinstate];
   // Return emit bits, ie the generated event.
-  return _state & 0x30;
+  return !!(_state & 0x30);
 }
 
 uint8_t ExternalRotary::read() const {

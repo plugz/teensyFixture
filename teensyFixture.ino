@@ -18,6 +18,7 @@
 #include <array>
 
 #include "Button.hpp"
+#include "Encoder.hpp"
 #include "Fader.hpp"
 #include "InputMCPSPI.hpp"
 #include "MyMCP3008.hpp"
@@ -80,6 +81,9 @@ static void btnCallback(uint8_t idx, bool val) {
     }
 }
 
+static void encoderCallback(uint8_t idx, bool val) {
+}
+
 static void faderCallback(uint8_t idx, uint16_t val) {
     // TODO
 //        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
@@ -113,6 +117,7 @@ void setup() {
     InputMCPSPI::setup();
     MyMCP3008::setup();
     Button::setup(btnCallback);
+    Encoder::setup(encoderCallback);
     Fader::setup(faderCallback);
     Translate::setup();
 

@@ -6,7 +6,8 @@
 #define INPUTMCPSPI_COUNT 2
 #define MYMCP3008_COUNT 1
 
-#define BUTTON_COUNT 10
+// 10 buttons + 4 encoder push buttons
+#define BUTTON_COUNT 16
 #define ENCODER_COUNT 4
 #define FADER_COUNT 6
 
@@ -22,8 +23,6 @@ public:
     // MCP23S17 usage
     static uint8_t buttonIdxToMCPIdx(uint8_t buttonIdx);
     static uint8_t buttonIdxToMCPPin(uint8_t buttonIdx);
-    static uint8_t encoderIdxToPushMCPIdx(uint8_t encoderIdx);
-    static uint8_t encoderIdxToPushMCPPin(uint8_t encoderIdx);
     static uint8_t encoderIdxToRot1MCPIdx(uint8_t encoderIdx);
     static uint8_t encoderIdxToRot1MCPPin(uint8_t encoderIdx);
     static uint8_t encoderIdxToRot2MCPIdx(uint8_t encoderIdx);

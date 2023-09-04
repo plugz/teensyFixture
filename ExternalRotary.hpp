@@ -23,7 +23,7 @@ class ExternalRotary
   public:
     ExternalRotary();
     // Process pin(s)
-    uint8_t update(uint8_t val1, uint8_t val2);
+    bool update(uint8_t val1, uint8_t val2);
     uint8_t read() const;
   private:
     uint8_t _state;

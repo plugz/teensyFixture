@@ -15,26 +15,30 @@ static uint8_t s_MCP3008IdxToCSPin[MYMCP3008_COUNT] = {
 // MCP23S17 usage
 
 static const uint8_t s_buttonIdxToMCPIdx[BUTTON_COUNT] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1,
 };
 
 static const uint8_t s_buttonIdxToMCPPin[BUTTON_COUNT] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13,
+    0, 3,
 };
 
-// {PUSH, ROT1, ROT2}
-static const uint8_t s_encoderIdxToMCPIdx[ENCODER_COUNT][3] = {
-    {0, 0, 0},
-    {0, 0, 0},
-    {1, 1, 1},
-    {1, 1, 1},
+// {ROT1, ROT2}
+static const uint8_t s_encoderIdxToMCPIdx[ENCODER_COUNT][2] = {
+    {0, 0},
+    {0, 0},
+    {1, 1},
+    {1, 1},
 };
 
-static const uint8_t s_encoderIdxToMCPPin[ENCODER_COUNT][3] = {
-    {10, 11, 12},
-    {13, 14, 15},
-    {0, 1, 2},
-    {3, 4, 5},
+// {ROT1, ROT2}
+// OOPS encoders are soldered reversed
+static const uint8_t s_encoderIdxToMCPPin[ENCODER_COUNT][2] = {
+    {12, 11},
+    {15, 14},
+    {2, 1},
+    {5, 4},
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,16 +80,6 @@ uint8_t Translate::buttonIdxToMCPIdx(uint8_t buttonIdx)
 uint8_t Translate::buttonIdxToMCPPin(uint8_t buttonIdx)
 {
     return s_buttonIdxToMCPPin[buttonIdx];
-}
-
-uint8_t Translate::encoderIdxToPushMCPIdx(uint8_t encoderIdx)
-{
-    return s_encoderIdxToMCPIdx[encoderIdx][0];
-}
-
-uint8_t Translate::encoderIdxToPushMCPPin(uint8_t encoderIdx)
-{
-    return s_encoderIdxToMCPPin[encoderIdx][0];
 }
 
 uint8_t Translate::encoderIdxToRot1MCPIdx(uint8_t encoderIdx)

@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 
+// airDJ
 #define ADJ_WIDTH 120
 #define ADJ_HEIGHT 60
 #define ADJ_DEPTH 30
@@ -112,6 +113,7 @@ class RGBEffect
                                          unsigned int height, unsigned int depth,
                                          StaticVector<int> const& ledArray);
     static PosArray posArrayAirDJ(StaticVector<int>& targetBuffer);
+    static PosArray posArrayTower(StaticVector<int>& targetBuffer);
 
     void setPattern(RGBEffectPattern pattern);
     void setAxis(RGBEffectAxis axis);

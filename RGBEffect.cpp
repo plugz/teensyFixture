@@ -170,6 +170,25 @@ RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer) {
     return posArray;
 }
 
+RGBEffect::PosArray RGBEffect::posArrayTower(StaticVector<int>& targetBuffer) {
+    PosArray posArray;
+    posArray.width = 120 * 4;
+    posArray.height = 120 * 4;
+    posArray.depth = 1;
+    posArray.array = targetBuffer;
+    unsigned int i = 0;
+    // horiz
+    for (; i < 120 * 4; ++i) {
+        posArray.array[i] = i + 0 * posArray.width + 0 * posArray.width * posArray.height;
+    }
+    // vert
+    for (; i < 120 * 8; ++i) {
+        unsigned int j = i - 120 * 4;
+        posArray.array[i] = 120 + j * posArray.width + 0 * posArray.width * posArray.height;
+    }
+    return posArray;
+}
+
 void RGBEffect::setPattern(RGBEffectPattern pattern)
 {
     _desc.pattern.pattern = pattern;

@@ -12,7 +12,7 @@ int posArrayBufferArray[NUM_LEDS] = {0};
 StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
 
 const RGBEffect::PosArray RGBEffectWrapper::posArray =
-    RGBEffect::posArrayAirDJ(posArrayBuffer);
+    RGBEffect::posArrayTower(posArrayBuffer);
 
 ///**/
 //    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);

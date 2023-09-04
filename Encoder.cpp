@@ -48,14 +48,15 @@ void Encoder::setupSingle(
     _externalRotary.update(
             inputMCPSPIs[_rot1Mcp].getCurrentValue(_rot1Pin),
             inputMCPSPIs[_rot2Mcp].getCurrentValue(_rot2Pin));
+    _rot1Debouncer.setInterval(5);
+    _rot2Debouncer.setInterval(5);
 }
 
 void Encoder::loopSingle()
 {
-    // update() returns true if the state changed
-    if (_externalRotary.update(
-            inputMCPSPIs[_rot1Mcp].getCurrentValue(_rot1Pin),
-            inputMCPSPIs[_rot2Mcp].getCurrentValue(_rot2Pin)))
+    bool update = _rot1Debouncer.update(inputMCPSPIs[_rot1Mcp].getCurrentValue(_rot1Pin));
+    update |= _rot2Debouncer.update(inputMCPSPIs[_rot2Mcp].getCurrentValue(_rot2Pin));
+    if (update && _externalRotary.update(_rot1Debouncer.read(), _rot2Debouncer.read()))
     {
         if (_externalRotary.read() == DIR_CCW)
         {

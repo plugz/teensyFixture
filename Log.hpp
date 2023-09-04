@@ -9,7 +9,7 @@
 #define LOGLEVEL_VERBOSE 5
 
 #ifndef LOGLEVEL
-# define LOGLEVEL LOGLEVEL_NONE
+# define LOGLEVEL LOGLEVEL_VERBOSE
 #endif
 
 #if (LOGLEVEL > 0)

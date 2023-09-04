@@ -1,6 +1,7 @@
 #ifndef __ENCODER_HPP__
 #define __ENCODER_HPP__
 
+#include "ExternalBounce.hpp"
 #include "ExternalRotary.hpp"
 
 #include <cstdint>
@@ -26,6 +27,8 @@ public:
 private:
     static Callback _callback;
     ExternalRotary _externalRotary;
+    ExternalBounce _rot1Debouncer;
+    ExternalBounce _rot2Debouncer;
     int32_t _rotaryPosition = 0;
     uint16_t _idx;
     uint8_t _rot1Mcp;

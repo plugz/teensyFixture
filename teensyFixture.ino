@@ -132,6 +132,7 @@ void setup() {
 void loop() {
     InputMCPSPI::loop();
     Button::loop(); // InputMCP.update should run before so values are updated
+    Encoder::loop();
     Fader::loop();
 
     if (rgbEffect.refreshPixels(millis())) {

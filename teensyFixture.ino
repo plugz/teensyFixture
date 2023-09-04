@@ -52,8 +52,8 @@ void flashLeds() {
 }
 
 static void btnCallback(uint8_t idx, bool val) {
-    // plaf
-    if (idx == 14) {
+    switch (idx) {
+    case 0: { // btn strob soft
         if (val) {
             rgbEffect.startFlash();
         }
@@ -61,30 +61,101 @@ static void btnCallback(uint8_t idx, bool val) {
             rgbEffect.stopFlash();
         }
         return;
-    }
-    if (!val)
-        return;
-    switch (idx % 4) {
-    case 0:
-    default: {
-        rgbEffect.prevMode();
     } break;
-    case 1: {
-        rgbEffect.nextMode();
+    case 1: { // btn strob vnr
+        if (val) {
+            rgbEffect.startFlash();
+        }
+        else {
+            rgbEffect.stopFlash();
+        }
     } break;
-    case 2: {
-        rgbEffect.prevColor();
+    case 2: { // btn smooth strobe blackout
+        if (val) {
+            rgbEffect.startFlash();
+        }
+        else {
+            rgbEffect.stopFlash();
+        }
     } break;
-    case 3: {
-        rgbEffect.nextColor();
+    case 3: { // btn full blackout
+        if (val) {
+            rgbEffect.startFlash();
+        }
+        else {
+            rgbEffect.stopFlash();
+        }
+    } break;
+    case 4: { // switch Hpart enable
+    } break;
+    case 5: { // switch Vpart enable
+    } break;
+    case 6: { // switch pattern0 enable
+    } break;
+    case 7: { // switch pattern0 turbo
+    } break;
+    case 8: { // switch pattern1 enable
+    } break;
+    case 9: { // switch pattern1 turbo
+    } break;
+    case 10: { // btn encoder 0 push
+    } break;
+    case 11: { // btn encoder 1 push
+    } break;
+    case 12: { // btn encoder 2 push
+    } break;
+    case 13: { // btn encoder 3 push
     } break;
     }
 }
 
 static void encoderCallback(uint8_t idx, bool val) {
+    // val true -> CW
+    // val false -> CCW
+    switch (idx) {
+    case 0: { // pattern 0 color
+        if (val)
+            rgbEffect.nextColor();
+        else
+            rgbEffect.prevColor();
+    } break;
+    case 1: { // pattern 0 pattern
+        if (val)
+            rgbEffect.nextMode();
+        else
+            rgbEffect.prevMode();
+    } break;
+    case 2: { // pattern 1 color
+        if (val)
+            rgbEffect.nextColor();
+        else
+            rgbEffect.prevColor();
+    } break;
+    case 3: { // pattern 0 color
+        if (val)
+            rgbEffect.nextMode();
+        else
+            rgbEffect.prevMode();
+    } break;
+    }
 }
 
 static void faderCallback(uint8_t idx, uint16_t val) {
+    switch (idx) {
+    case 0: { // Hpart pos
+    } break;
+    case 1: { // Hpart size
+    } break;
+    case 2: { // Vpart pos
+    } break;
+    case 3: { // Vpart size
+    } break;
+    case 4: { // pattern0 dim
+    } break;
+    case 5: { // pattern1 dim
+    } break;
+    }
+
     // TODO
 //        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
 //    switch (idx) {

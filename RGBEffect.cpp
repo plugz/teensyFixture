@@ -172,19 +172,19 @@ RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer) {
 
 RGBEffect::PosArray RGBEffect::posArrayTower(StaticVector<int>& targetBuffer) {
     PosArray posArray;
-    posArray.width = 120 * 4;
-    posArray.height = 120 * 4;
+    posArray.width = TWR_WIDTH;
+    posArray.height = TWR_HEIGHT;
     posArray.depth = 1;
     posArray.array = targetBuffer;
     unsigned int i = 0;
     // horiz
-    for (; i < 120 * 4; ++i) {
+    for (; i < TWR_WIDTH; ++i) {
         posArray.array[i] = i + 0 * posArray.width + 0 * posArray.width * posArray.height;
     }
     // vert
-    for (; i < 120 * 8; ++i) {
-        unsigned int j = i - 120 * 4;
-        posArray.array[i] = 120 + j * posArray.width + 0 * posArray.width * posArray.height;
+    for (; i < TWR_WIDTH + TWR_HEIGHT; ++i) {
+        unsigned int j = i - TWR_WIDTH;
+        posArray.array[i] = TWR_STRIPLEN + j * posArray.width + 0 * posArray.width * posArray.height;
     }
     return posArray;
 }
@@ -211,6 +211,11 @@ void RGBEffect::setColor(RGBEffectColor color)
 {
     _desc.color = color;
 //    beginCurrentCombo();
+}
+
+void RGBEffect::setDimmer(Float dim)
+{
+    _dimmer = dim;
 }
 
 void RGBEffect::setMixingMode(RGBEffectMixingMode mixingMode)
@@ -448,6 +453,20 @@ RGBEffect::Color RGBEffect::getGradientColor(Float advance)
     return Color{uint8_t(gradR), uint8_t(gradG), uint8_t(gradB)};
 }
 
+RGBEffect::Color dimColor(RGBEffect::Color color) {
+    return dimColor(color, _dimmer);
+}
+
+RGBEffect::Color dimColor(RGBEffect::Color color, Float dim) {
+    unsigned int c = (color[0] * dim).scaleDown();
+    color[0] = std::min(c, 0xff);
+    unsigned int c = (color[1] * dim).scaleDown();
+    color[1] = std::min(c, 0xff);
+    unsigned int c = (color[2] * dim).scaleDown();
+    color[2] = std::min(c, 0xff);
+    return color;
+}
+
 void RGBEffect::beginCurrentCombo()
 {
     _startTime = millis();
@@ -489,7 +508,8 @@ void RGBEffect::beginCurrentCombo()
 
 StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
 {
-    using ColorArray = StaticVector2<Color, 128>;
+    using ColorArray = StaticVector2<Color, sizeof(Color) * 100>;
+
     // clang-format off
     static const ColorArray flameColors{
         {0xff, 0x00, 0x00},
@@ -594,7 +614,7 @@ void RGBEffect::refreshPixelsSmoothOnOff()
             std::memset(_pixels + i * 3, 0, 3);
             continue;
         }
-        mixPixel(_pixels + i * 3, rgb.data());
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -620,7 +640,7 @@ void RGBEffect::refreshPixelsSmootherOnOff()
             std::memset(_pixels + i * 3, 0, 3);
             continue;
         }
-        mixPixel(_pixels + i * 3, rgb.data());
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -639,7 +659,7 @@ void RGBEffect::refreshPixelsStrobe()
             std::memset(_pixels + i * 3, 0, 3);
             continue;
         }
-        mixPixel(_pixels + i * 3, rgb.data());
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -674,7 +694,7 @@ void RGBEffect::refreshPixelsStripe()
         {
             std::fill(std::begin(rgb), std::end(rgb), 0);
         }
-        mixPixel(_pixels + i * 3, rgb.data());
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -718,7 +738,7 @@ void RGBEffect::refreshPixelsStripeSmooth()
         {
             std::fill(std::begin(rgb), std::end(rgb), 0);
         }
-        mixPixel(_pixels + i * 3, rgb.data());
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -758,7 +778,8 @@ void RGBEffect::refreshPixelsRotation()
 
         Float totalSinus = Utils::sin1((angle * 2 + Float::scaleUp(_prevUpdateMillis) / _desc.loopTime));
 
-        mixPixel(_pixels + i * 3, (totalSinus > Float::scaleUp(0.5) ? color.data() : black.data()));
+        Color c = (totalSinus > Float::scaleUp(0.5) ? color : black);
+        mixPixel(_pixels + i * 3, dimColor(c).data());
     }
 }
 
@@ -798,7 +819,8 @@ void RGBEffect::refreshPixelsRotationThin()
 
         Float totalSinus = Utils::sin1((angle * 2 + Float::scaleUp(_prevUpdateMillis) / _desc.loopTime));
 
-        mixPixel(_pixels + i * 3, (totalSinus > Float::scaleUp(0.95) ? color.data() : black.data()));
+        Color c = totalSinus > Float::scaleUp(0.95) ? color : black;
+        mixPixel(_pixels + i * 3, dimColor(c).data());
     }
 }
 
@@ -843,7 +865,7 @@ void RGBEffect::refreshPixelsRotationSmooth()
         color[0] = (r * totalSinus).scaleDown();
         color[1] = (g * totalSinus).scaleDown();
         color[2] = (b * totalSinus).scaleDown();
-        mixPixel(_pixels + i * 3, color.data());
+        mixPixel(_pixels + i * 3, dimColor(color).data());
     }
 }
 
@@ -889,7 +911,7 @@ void RGBEffect::refreshPixelsRotationSmoothThin()
         color[0] = (r * totalSinusSq).scaleDown();
         color[1] = (g * totalSinusSq).scaleDown();
         color[2] = (b * totalSinusSq).scaleDown();
-        mixPixel(_pixels + i * 3, color.data());
+        mixPixel(_pixels + i * 3, dimColor(color).data());
     }
 }
 
@@ -921,7 +943,7 @@ void RGBEffect::refreshPixelsPlasma()
         Float nz = Float::scaleUp(z) / square;
         Float n = SimplexNoise1234::noise(nx * size, ny * size, nz * size, plasmaStep);
         Float n01 = (n + Float::scaleUp(1)) / 2;
-        mixPixel(_pixels + i * 3, getGradientColor(n01 + plasmaStep / 4).data());
+        mixPixel(_pixels + i * 3, dimColor(getGradientColor(n01 + plasmaStep / 4)).data());
     }
 }
 

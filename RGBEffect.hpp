@@ -12,6 +12,13 @@
 #define ADJ_HEIGHT 60
 #define ADJ_DEPTH 30
 
+// tower
+#define TWR_STRIPLEN 120
+#define TWR_HSTRIPCOUNT 4
+#define TWR_VSTRIPCOUNT 4
+#define TWR_WIDTH (TWR_STRIPLEN * TWR_HSTRIPCOUNT)
+#define TWR_HEIGHT (TWR_STRIPLEN * TWR_VSTRIPCOUNT)
+
 enum class RGBEffectPattern
 {
     SMOOTH_ON_OFF,
@@ -122,6 +129,7 @@ class RGBEffect
     int loopTime() const;
     void setLoopTime(int loopTime);
     void setColor(RGBEffectColor color);
+    void setDimmer(Float dim);
     void setPosArray(PosArray const& posArray);
 
     bool refreshPixels(unsigned long currentMillis);
@@ -136,14 +144,18 @@ class RGBEffect
     unsigned int idxToPerpendicularY(unsigned int idx) const;
     std::array<uint8_t, 3> getTimeGradientColor(Float timeMultiplier = Float::scaleUp(1));
     std::array<uint8_t, 3> getGradientColor(Float advance);
+    void dimColor(Color& color);
+    static void dimColor(Color& color, Float);
     void beginCurrentCombo();
     StaticVector<std::array<uint8_t, 3>> const& getColor() const;
+
     uint8_t* _pixels;
     unsigned int _pixelCount;
     PosArray _posArray;
     unsigned long _startTime = 0;
     unsigned long _prevUpdateMillis = 0;
     Desc _desc;
+    Float _dimmer = Float::scaleUp(1);
 
     // smooth on-off
     void beginSmoothOnOff();

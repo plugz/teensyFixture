@@ -4,7 +4,7 @@
 
 #define MYMIN(x, y) ((x) < (y) ? (x) : (y))
 
-#define NUM_LEDS_PER_STRIP ADJ_HEIGHT
+#define NUM_LEDS_PER_STRIP TWR_STRIPLEN
 #define NUM_STRIPS (8)
 #define NUM_LEDS (NUM_LEDS_PER_STRIP * NUM_STRIPS) // can not go higher than this - Runs out of SRAM
 

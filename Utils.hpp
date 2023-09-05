@@ -110,7 +110,6 @@ template <typename T> struct StaticVector {
         , size(s) {
         }
 
-
     T* data;
     size_t size;
     T& operator[](size_t idx) { return data[idx]; }

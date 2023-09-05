@@ -14,175 +14,69 @@ StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBuffer
 const RGBEffect::PosArray RGBEffectWrapper::posArray =
     RGBEffect::posArrayTower(posArrayBuffer);
 
-///**/
-//    RGBEffect::posArraySimple(NUM_LEDS_PER_STRIP, 1);//NUM_STRIPS);
-//    RGBEffect::posArraySimple(60, 1);//NUM_STRIPS);
-/**/
-/** /
-    RGBEffect::posArrayFromLedArray({// Fairy Wings V3
-        -1, -1, 24, -1, 23, -1, -1,    -1, -1, 14, -1, 13, -1, -1,
-        25, -1, -1, -1, -1, -1, -1,    -1, -1, -1, -1, -1, -1, 12,
-        -1, -1, -1, -1, -1, 22, -1,    -1, 15, -1, -1, -1, -1, -1,
-        -1, 26, -1, 27, -1, -1, -1,    -1, -1, -1, 10, -1, 11, -1,
-        -1, -1, -1, -1, -1, 28, 21,    16,  9, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1,    -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, 29, -1, -1, 20,    17, -1, -1,  8, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1,    -1, -1, -1, -1, -1, -1, -1,
-        -1, 30, -1, 31, -1, 32, 19,    18,  5, -1,  6, -1,  7, -1,
-        -1, -1, -1, -1, -1, -1, -1,    -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, 33, -1, -1, -1,    -1, -1, -1,  4, -1, -1, -1,
-        -1, 34, -1, -1, -1, -1, 37,     0, -1, -1, -1, -1,  3, -1,
-        -1, -1, -1, -1, -1, -1, -1,    -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, 35, -1, 36, -1, -1,    -1, -1,  1, -1,  2, -1, -1,
-        }, 14, 14);
-/ **/
-/** /
-    RGBEffect::posArrayFromLedArray({// Eventail
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 17, -1, 18, -1, 19, -1, 20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, -1, -1, -1, -1, -1, -1, -1, -1, -1, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 22, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 23, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 24, -1, -1, -1, 28, 29, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, 12, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 25, -1, -1, -1, 27, -1, -1, -1, -1, 30, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 26, -1, -1, -1, -1, -1, -1, -1, -1, 31, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 32, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1,  9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 33, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-         8, -1, -1, -1, -1, -1, -1, -1,  3, -1,  2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 34, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 35, -1, -1,
-        -1,  7, -1, -1, -1, -1, -1,  4, -1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 36, -1, -1, -1, -1,
-        -1, -1, -1,  6, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 37, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1,  5, -1, -1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 38, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 39, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        }, 40, 18);
-/ **/
-/** /
-    RGBEffect::posArrayFromLedArray({ // Jupe
-        -1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 39, -1, 38, -1, -1,
-        -1, -1, -1, -1, -1, -1,  2, -1,  3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 10, -1, 37,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1,  9, -1, 11, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 36,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  6, -1,  7, -1,  8, -1, -1, -1, 12, -1,
-        23, -1, 22, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 35, -1,
-        -1, -1, -1, -1, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, -1, -1, -1,
-        24, -1, -1, -1, -1, -1, 20, -1, 19, -1, 18, -1, 17, -1, 16, -1, 15, -1, 14, -1, 34, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, 25, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 33, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, 26, -1, 27, -1, 28, -1, 29, -1, 30, -1, 31, -1, 32, -1, -1, -1, -1, -1, -1, -1,
-        }, 24, 12);
-/ **/
-
 using EffectDescVector = StaticVector2<RGBEffect::Desc, 64>;
 
-struct EffectComboDesc {
-    EffectDescVector effects;
-    EffectDescVector strobeEffects;
-};
-
-using EffectComboDescVector = StaticVector2<EffectComboDesc, 16>;
-
 // clang-format off
-EffectComboDescVector const sEffects{
+EffectDescVector const sEffects{
     {
-        {{{RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE}},
-        {{{RGBEffectPattern::STROBE}, 160, RGBEffectMixingMode::MAX}}
+        {RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE
     },
     {
-        {{{RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::STRIPE_SMOOTH}, 1700, RGBEffectMixingMode::SUB}},
-        {{{RGBEffectPattern::SMOOTHER_ON_OFF}, 160, RGBEffectMixingMode::MAX}}
+        {RGBEffectPattern::STRIPE_SMOOTH}, 1700, RGBEffectMixingMode::SUB
     },
     {
-        {{{RGBEffectPattern::ROTATION}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::ROTATION_THIN}, 400, RGBEffectMixingMode::SUB}},
-        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
+        {RGBEffectPattern::ROTATION}, 1700, RGBEffectMixingMode::REPLACE
     },
     {
-        {{{RGBEffectPattern::ROTATION, RGBEffectAxis::VERTICAL}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::VERTICAL}, 400, RGBEffectMixingMode::SUB}},
-        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
+        {RGBEffectPattern::ROTATION_THIN}, 400, RGBEffectMixingMode::SUB
     },
     {
-        {{{RGBEffectPattern::ROTATION, RGBEffectAxis::FRONTAL}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::FRONTAL}, 400, RGBEffectMixingMode::SUB}},
-        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
+        {RGBEffectPattern::ROTATION, RGBEffectAxis::VERTICAL}, 1700, RGBEffectMixingMode::REPLACE
     },
     {
-        {{{RGBEffectPattern::ROTATION_SMOOTH}, 1300, RGBEffectMixingMode::ADD},
-         {{RGBEffectPattern::ROTATION_SMOOTH_THIN}, 4000, RGBEffectMixingMode::SUB}},
-        {{{RGBEffectPattern::ROTATION}, 400, RGBEffectMixingMode::GRAINMERGE}}
+        {RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::VERTICAL}, 400, RGBEffectMixingMode::SUB
     },
     {
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1200, RGBEffectMixingMode::MAX}},
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 280, RGBEffectMixingMode::MAX}}
+        {RGBEffectPattern::ROTATION_SMOOTH}, 1300, RGBEffectMixingMode::ADD
     },
     {
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::STRIPE, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1200, RGBEffectMixingMode::MAX}},
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 280, RGBEffectMixingMode::MAX}}
+        {RGBEffectPattern::ROTATION_SMOOTH_THIN}, 4000, RGBEffectMixingMode::SUB
     },
     {
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 1700, RGBEffectMixingMode::REPLACE},
-         {{RGBEffectPattern::STRIPE, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 1200, RGBEffectMixingMode::MAX}},
-        {{{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::FRONTAL, RGBEffectDirection::PING_PONG}, 280, RGBEffectMixingMode::MAX}}
+        {RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1700, RGBEffectMixingMode::REPLACE
+    },
+    {
+        {RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1200, RGBEffectMixingMode::MAX
+    },
+    {
+        {RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1700, RGBEffectMixingMode::REPLACE
+    },
+    {
+        {RGBEffectPattern::STRIPE, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1200, RGBEffectMixingMode::MAX
     },
 };
 // clang-format on
 
+RGBEffect::Desc smoothOffDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 1000, RGBEffectMixingMode::SUB, RGBEffectColor::WHITE};
+RGBEffect::Desc fullOffDesc{{RGBEffectPattern::STROBE}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::WHITE, Float::scaleUp(0)};
+RGBEffect::Desc smoothStrobeDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 800, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
+RGBEffect::Desc vnrStrobeDesc{{RGBEffectPattern::STROBE}, 120, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
+
 using ColorVector = StaticVector2<RGBEffectColor, 64>;
 
-struct ColorComboDesc {
-    ColorVector colors;
-    ColorVector strobeColors;
-};
-
-using ColorComboVector = StaticVector2<ColorComboDesc, 16>;
-
 // clang-format off
-
-ColorComboVector sColors{
-    {
-        {RGBEffectColor::OCEAN, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    },
-    {
-        {RGBEffectColor::FLAME, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    },
-    {
-        {RGBEffectColor::GRASS, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    },
-    {
-        {RGBEffectColor::RAINBOW, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    },
-    {
-        {RGBEffectColor::PINK, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    },
-    {
-        {RGBEffectColor::GOLD, RGBEffectColor::WHITE},
-        {RGBEffectColor::WHITE}
-    }
+ColorVector sColors{
+    RGBEffectColor::OCEAN,
+    RGBEffectColor::FLAME,
+    RGBEffectColor::GRASS,
+    RGBEffectColor::RAINBOW,
+    RGBEffectColor::PINK,
+    RGBEffectColor::GOLD
 };
-
 // clang-format on
 
 void RGBEffectWrapper::begin(uint8_t* pixels, int pixelCount) {
     LOGLN_VERBOSE("begin 1");
-
-    static RGBEffect currentEffectsBuffer[16];
-    _currentEffects.data = currentEffectsBuffer;
-    static RGBEffect currentStrobeEffectsBuffer[16];
-    _currentStrobeEffects.data = currentStrobeEffectsBuffer;
 
     _pixels = pixels;
     _pixelCount = pixelCount;
@@ -207,8 +101,6 @@ void RGBEffectWrapper::nextMode() {
 
 void RGBEffectWrapper::begin() {
     LOGLN_VERBOSE("begin 2");
-    _currentEffects.size = 0;
-    _currentStrobeEffects.size = 0;
 
     LOGLN_VERBOSE("start effects");
     unsigned int idx = 0;

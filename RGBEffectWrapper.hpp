@@ -13,6 +13,7 @@ public:
 
 public:
     void begin(uint8_t* pixels, int pixelCount);
+    void startFlash
     void startFlash();
     void stopFlash();
     void prevMode();
@@ -27,12 +28,18 @@ private:
     void begin();
     uint8_t* _pixels;
     unsigned int _pixelCount;
-    int _currentEffectsIdx = 0;
-    int _currentColorsIdx = 0;
+    int _currentEffect0Idx = 0;
+    int _currentEffect1Idx = 0;
+    int _currentColor0Idx = 0;
+    int _currentColor1Idx = 0;
+    RGBEffect _currentEffect0;
+    RGBEffect _currentEffect1;
+    RGBEffect _smoothOff;
+    RGBEffect _fullOff;
+    RGBEffect _smoothStrobe;
+    RGBEffect _vnrStrobe;
+
     Float _speed = Float::scaleUp(1);
-    StaticVector<RGBEffect> _currentEffects;
-    StaticVector<RGBEffect> _currentStrobeEffects;
-    bool _flashing = false;
 };
 
 #endif

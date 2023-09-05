@@ -99,6 +99,7 @@ class RGBEffect
         int loopTime;
         RGBEffectMixingMode mixingMode = RGBEffectMixingMode::REPLACE;
         RGBEffectColor color = RGBEffectColor::RAINBOW;
+        Float dimmer = Float::scaleUp(1);
     };
     struct PosArray
     {
@@ -155,7 +156,6 @@ class RGBEffect
     unsigned long _startTime = 0;
     unsigned long _prevUpdateMillis = 0;
     Desc _desc;
-    Float _dimmer = Float::scaleUp(1);
 
     // smooth on-off
     void beginSmoothOnOff();

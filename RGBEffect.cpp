@@ -215,7 +215,7 @@ void RGBEffect::setColor(RGBEffectColor color)
 
 void RGBEffect::setDimmer(Float dim)
 {
-    _dimmer = dim;
+    _desc.dimmer = dim;
 }
 
 void RGBEffect::setMixingMode(RGBEffectMixingMode mixingMode)
@@ -454,7 +454,7 @@ RGBEffect::Color RGBEffect::getGradientColor(Float advance)
 }
 
 RGBEffect::Color dimColor(RGBEffect::Color color) {
-    return dimColor(color, _dimmer);
+    return dimColor(color, _desc.dimmer);
 }
 
 RGBEffect::Color dimColor(RGBEffect::Color color, Float dim) {
@@ -508,7 +508,7 @@ void RGBEffect::beginCurrentCombo()
 
 StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
 {
-    using ColorArray = StaticVector2<Color, sizeof(Color) * 100>;
+    using ColorArray = StaticVector2<Color, 128>;
 
     // clang-format off
     static const ColorArray flameColors{

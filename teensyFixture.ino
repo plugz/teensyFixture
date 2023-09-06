@@ -52,12 +52,46 @@ void flashLeds() {
     }
 }
 
-    void flashSmoothOff(bool enable);
-    void flashFullOff(bool enable);
-    void flashSmoothStrobe(bool enable);
-    void flashVnrStrobe(bool enable);
+static void updatePat0Turbo(bool turbo0, bool turbo1) {
+    Float speed;
+    if (!turbo0) {
+        if (!turbo1)
+            speed = Float::scaleUp(0.5f);
+        else
+            speed = Float::scaleUp(3.0f);
+    }
+    else {
+        if (!turbo1)
+            speed = Float::scaleUp(1.0f);
+        else
+            speed = Float::scaleUp(7.0f);
+    }
+    rgbEffect.pat0ChangeSpeed(speed);
+}
+
+static void updatePat1Turbo(bool turbo0, bool turbo1) {
+    Float speed;
+    if (!turbo0) {
+        if (!turbo1)
+            speed = Float::scaleUp(0.5f);
+        else
+            speed = Float::scaleUp(3.0f);
+    }
+    else {
+        if (!turbo1)
+            speed = Float::scaleUp(1.0f);
+        else
+            speed = Float::scaleUp(7.0f);
+    }
+    rgbEffect.pat1ChangeSpeed(speed);
+}
 
 static void btnCallback(uint8_t idx, bool val) {
+    static bool pat0Turbo0 = false;
+    static bool pat0Turbo1 = false;
+    static bool pat1Turbo0 = false;
+    static bool pat1Turbo1 = false;
+
     switch (idx) {
     case 0: { // btn strob soft
         rgbEffect.flashSmoothStrobe(val);
@@ -77,23 +111,21 @@ static void btnCallback(uint8_t idx, bool val) {
     case 5: { // switch Vpart enable
         rgbEffect.vPartEnable(val);
     } break;
-    case 6: { // switch pattern0 enable
-        rgbEffect.pat0Enable(val);
+    case 6: { // switch pattern0 turbo1
+        pat0Turbo1 = val;
+        updatePat0Turbo(pat0Turbo0, pat0Turbo1);
     } break;
-    case 7: { // switch pattern0 turbo
-        if (val)
-            rgbEffect.pat0ChangeSpeed(Float::scaleUp(4.0f));
-        else
-            rgbEffect.pat0ChangeSpeed(Float::scaleUp(1));
+    case 7: { // switch pattern0 turbo0
+        pat0Turbo0 = val;
+        updatePat0Turbo(pat0Turbo0, pat0Turbo1);
     } break;
-    case 8: { // switch pattern1 enable
-        rgbEffect.pat1Enable(val);
+    case 8: { // switch pattern1 turbo1
+        pat1Turbo1 = val;
+        updatePat1Turbo(pat1Turbo0, pat1Turbo1);
     } break;
-    case 9: { // switch pattern1 turbo
-        if (val)
-            rgbEffect.pat1ChangeSpeed(Float::scaleUp(4.0f));
-        else
-            rgbEffect.pat1ChangeSpeed(Float::scaleUp(1));
+    case 9: { // switch pattern1 turbo0
+        pat1Turbo0 = val;
+        updatePat1Turbo(pat1Turbo0, pat1Turbo1);
     } break;
     case 10: { // btn encoder 0 push
     } break;

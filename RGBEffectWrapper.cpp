@@ -58,7 +58,7 @@ EffectDescVector const sEffects{
 // clang-format on
 
 RGBEffect::Desc sSmoothOffDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 1000, RGBEffectMixingMode::SUB, RGBEffectColor::WHITE};
-RGBEffect::Desc sFullOffDesc{{RGBEffectPattern::STROBE}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::WHITE, Float::scaleUp(0)};
+RGBEffect::Desc sFullOffDesc{{RGBEffectPattern::PLAIN}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::BLACK, Float::scaleUp(0)};
 RGBEffect::Desc sSmoothStrobeDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 800, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
 RGBEffect::Desc sVnrStrobeDesc{{RGBEffectPattern::STROBE}, 120, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
 

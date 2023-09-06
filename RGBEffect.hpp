@@ -21,9 +21,11 @@
 
 enum class RGBEffectPattern
 {
+    PLAIN,
+    STROBE,
+    ON_OFF,
     SMOOTH_ON_OFF,
     SMOOTHER_ON_OFF,
-    STROBE,
     STRIPE,
     STRIPE_SMOOTH,
     ROTATION,
@@ -37,12 +39,20 @@ enum class RGBEffectPattern
 
 enum class RGBEffectColor
 {
+    BLACK,
+    RED,
+    YELLOW,
+    GREEN,
+    CYAN,
+    BLUE,
+    MAGENTA,
+    WHITE,
     FLAME,
     GRASS,
     OCEAN,
     RAINBOW,
     GOLD,
-    WHITE,
+    WHITEMIXED,
     PINK,
 
     COUNT
@@ -157,6 +167,18 @@ class RGBEffect
     unsigned long _prevUpdateMillis = 0;
     Desc _desc;
 
+    // plain
+    void beginPlain();
+    void refreshPixelsPlain();
+
+    // strobe
+    void beginStrobe();
+    void refreshPixelsStrobe();
+
+    // on-off
+    void beginOnOff();
+    void refreshPixelsOnOff();
+
     // smooth on-off
     void beginSmoothOnOff();
     void refreshPixelsSmoothOnOff();
@@ -164,10 +186,6 @@ class RGBEffect
     // smoother on-off
     void beginSmootherOnOff();
     void refreshPixelsSmootherOnOff();
-
-    // strobe
-    void beginStrobe();
-    void refreshPixelsStrobe();
 
     // stripe
     void beginStripe();

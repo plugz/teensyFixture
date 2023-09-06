@@ -293,20 +293,27 @@ void RGBEffect::setPosArray(PosArray const& posArray)
 bool RGBEffect::refreshPixels(unsigned long currentMillis)
 {
     currentMillis -= _startTime;
-    if (currentMillis - _prevUpdateMillis >= 16) // ~60fps
+    _prevUpdateMillis = currentMillis;
+//    if (currentMillis - _prevUpdateMillis >= 16) // ~60fps
     {
-        _prevUpdateMillis = (currentMillis / 16) * 16;
+//        _prevUpdateMillis = (currentMillis / 16) * 16;
         switch (_desc.pattern.pattern)
         {
         default:
+        case RGBEffectPattern::PLAIN:
+            refreshPixelsPlain();
+            break;
+        case RGBEffectPattern::STROBE:
+            refreshPixelsStrobe();
+            break;
+        case RGBEffectPattern::ON_OFF:
+            refreshPixelsOnOff();
+            break;
         case RGBEffectPattern::SMOOTH_ON_OFF:
             refreshPixelsSmoothOnOff();
             break;
         case RGBEffectPattern::SMOOTHER_ON_OFF:
             refreshPixelsSmootherOnOff();
-            break;
-        case RGBEffectPattern::STROBE:
-            refreshPixelsStrobe();
             break;
         case RGBEffectPattern::STRIPE:
             refreshPixelsStripe();
@@ -479,14 +486,20 @@ void RGBEffect::beginCurrentCombo()
     switch (_desc.pattern.pattern)
     {
     default:
+    case RGBEffectPattern::PLAIN:
+        beginPlain();
+        break;
+    case RGBEffectPattern::STROBE:
+        beginStrobe();
+        break;
+    case RGBEffectPattern::ON_OFF:
+        beginOnOff();
+        break;
     case RGBEffectPattern::SMOOTH_ON_OFF:
         beginSmoothOnOff();
         break;
     case RGBEffectPattern::SMOOTHER_ON_OFF:
         beginSmootherOnOff();
-        break;
-    case RGBEffectPattern::STROBE:
-        beginStrobe();
         break;
     case RGBEffectPattern::STRIPE:
         beginStripe();
@@ -517,6 +530,38 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
     using ColorArray = StaticVector2<Color, 128>;
 
     // clang-format off
+    static const ColorArray blackColors{
+        {0x00, 0x00, 0x00}
+    };
+
+    static const ColorArray redColors{
+        {0xff, 0x00, 0x00}
+    };
+
+    static const ColorArray yellowColors{
+        {0xff, 0xff, 0x00}
+    };
+
+    static const ColorArray greenColors{
+        {0x00, 0xff, 0x00}
+    };
+
+    static const ColorArray cyanColors{
+        {0x00, 0xff, 0xff}
+    };
+
+    static const ColorArray blueColors{
+        {0x00, 0x00, 0xff}
+    };
+
+    static const ColorArray magentaColors{
+        {0xff, 0x00, 0xff}
+    };
+
+    static const ColorArray whiteColors{
+        {0xff, 0xff, 0xff}
+    };
+
     static const ColorArray flameColors{
         {0xff, 0x00, 0x00},
         {0xff, 0x00, 0x00},
@@ -559,7 +604,7 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
         {0xee, 0xe8, 0xaa},
     };
 
-    static const ColorArray whiteColors{
+    static const ColorArray whiteMixedColors{
         {0xff, 0xff, 0xff},
         {0xff, 0xff, 0xff},
         {0xef, 0xeb, 0xdd},
@@ -579,6 +624,22 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
 
     switch (_desc.color)
     {
+    case RGBEffectColor::BLACK:
+        return blackColors;
+    case RGBEffectColor::RED:
+        return redColors;
+    case RGBEffectColor::YELLOW:
+        return yellowColors;
+    case RGBEffectColor::GREEN:
+        return greenColors;
+    case RGBEffectColor::CYAN:
+        return cyanColors;
+    case RGBEffectColor::BLUE:
+        return blueColors;
+    case RGBEffectColor::MAGENTA:
+        return magentaColors;
+    case RGBEffectColor::WHITE:
+        return whiteColors;
     case RGBEffectColor::FLAME:
     default:
         return flameColors;
@@ -590,10 +651,65 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
         return oceanColors;
     case RGBEffectColor::GOLD:
         return goldColors;
-    case RGBEffectColor::WHITE:
-        return whiteColors;
+    case RGBEffectColor::WHITEMIXED:
+        return whiteMixedColors;
     case RGBEffectColor::PINK:
         return pinkColors;
+    }
+}
+
+void RGBEffect::beginPlain()
+{
+}
+
+void RGBEffect::refreshPixelsPlain()
+{
+    Color rgb = getTimeGradientColor(Float::scaleUp(0.5f));
+    for (unsigned int i = 0; i < _pixelCount; ++i) {
+        if (_posArray.array[i] == -1) {
+            std::memset(_pixels + i * 3, 0, 3);
+            continue;
+        }
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
+    }
+}
+
+void RGBEffect::beginStrobe()
+{
+}
+
+void RGBEffect::refreshPixelsStrobe()
+{
+    Color rgb{0,0,0};
+    // 40ms flashes
+    if (_prevUpdateMillis % _desc.loopTime < 40) {
+        rgb = getTimeGradientColor();
+    }
+    for (unsigned int i = 0; i < _pixelCount; ++i) {
+        if (_posArray.array[i] == -1) {
+            std::memset(_pixels + i * 3, 0, 3);
+            continue;
+        }
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
+    }
+}
+
+void RGBEffect::beginOnOff()
+{
+}
+
+void RGBEffect::refreshPixelsOnOff()
+{
+    Color rgb{0,0,0};
+    if ((_prevUpdateMillis / (_desc.loopTime / 2)) % 2) {
+        rgb = getTimeGradientColor(Float::scaleUp(10));
+    }
+    for (unsigned int i = 0; i < _pixelCount; ++i) {
+        if (_posArray.array[i] == -1) {
+            std::memset(_pixels + i * 3, 0, 3);
+            continue;
+        }
+        mixPixel(_pixels + i * 3, dimColor(rgb).data());
     }
 }
 
@@ -642,25 +758,6 @@ void RGBEffect::refreshPixelsSmootherOnOff()
     Color rgb{uint8_t(red), uint8_t(green), uint8_t(blue)};
     for (unsigned int i = 0; i < _pixelCount; ++i)
     {
-        if (_posArray.array[i] == -1) {
-            std::memset(_pixels + i * 3, 0, 3);
-            continue;
-        }
-        mixPixel(_pixels + i * 3, dimColor(rgb).data());
-    }
-}
-
-void RGBEffect::beginStrobe()
-{
-}
-
-void RGBEffect::refreshPixelsStrobe()
-{
-    Color rgb{0,0,0};
-    if ((_prevUpdateMillis / (_desc.loopTime / 2)) % 2) {
-        rgb = getTimeGradientColor(Float::scaleUp(10));
-    }
-    for (unsigned int i = 0; i < _pixelCount; ++i) {
         if (_posArray.array[i] == -1) {
             std::memset(_pixels + i * 3, 0, 3);
             continue;

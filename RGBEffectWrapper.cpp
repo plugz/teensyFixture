@@ -164,13 +164,13 @@ void RGBEffectWrapper::pat1Enable(bool enable) {
 }
 
 void RGBEffectWrapper::pat0ChangeDim(Float dim) {
-    LOGLN_DEBUG("pat0 speed %032b", (unsigned)dim.value);
+    LOGLN_DEBUG("pat0 speed %08x", (unsigned)dim.value);
     _pat0Dim = dim;
     _pat0Effect.setDimmer(_pat0Dim);
 }
 
 void RGBEffectWrapper::pat1ChangeDim(Float dim) {
-    LOGLN_DEBUG("pat1 speed %032b", (unsigned)dim.value);
+    LOGLN_DEBUG("pat1 speed %08x", (unsigned)dim.value);
     _pat1Dim = dim;
     _pat1Effect.setDimmer(_pat0Dim);
 }
@@ -200,13 +200,13 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     }
 
     if (_smoothOffFlashing)
-        ret |= _smoothOff;
+        ret |= _smoothOffEffect.refreshPixels(effectMillis);
     if (_fullOffFlashing)
-        ret |= _fullOff;
+        ret |= _fullOffEffect.refreshPixels(effectMillis);
     if (_smoothStrobeFlashing)
-        ret |= _smoothStrobe;
+        ret |= _smoothStrobeEffect.refreshPixels(effectMillis);
     if (_vnrStrobeFlashing)
-        ret |= _vnrStrobe;
+        ret |= _vnrStrobeEffect.refreshPixels(effectMillis);
 
     prevMillis = currentMillis;
     prevEffectMillis = effectMillis;
@@ -229,9 +229,9 @@ void RGBEffectWrapper::begin() {
     LOGLN_VERBOSE("start strobe effects");
 
     _smoothOffEffect.begin(sSmoothOffDesc, _pixels, _pixelCount, posArray);
-    _fullOffEffect(sFullOffDesc, _pixels, _pixelCount, posArray);
-    _smoothStrobeEffect(sSmoothStrobeDesc, _pixels, _pixelCount, posArray);
-    _vnrStrobeEffect(sVnrStrobeDesc, _pixels, _pixelCount, posArray);
+    _fullOffEffect.begin(sFullOffDesc, _pixels, _pixelCount, posArray);
+    _smoothStrobeEffect.begin(sSmoothStrobeDesc, _pixels, _pixelCount, posArray);
+    _vnrStrobeEffect.begin(sVnrStrobeDesc, _pixels, _pixelCount, posArray);
 }
 
 void RGBEffectWrapper::pat0Begin() {

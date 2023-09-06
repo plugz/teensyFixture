@@ -144,7 +144,7 @@ RGBEffect::PosArray RGBEffect::posArrayAirDJ(StaticVector<int>& targetBuffer) {
     }
     // rien
     for (unsigned int i = ADJ_HEIGHT * 3; i < ADJ_HEIGHT * 4; ++i) {
-        unsigned int j = i - ADJ_HEIGHT * 3;
+        // unsigned int j = i - ADJ_HEIGHT * 3;
         posArray.array[i] = -1;
     }
     // poto jardin loin
@@ -453,17 +453,23 @@ RGBEffect::Color RGBEffect::getGradientColor(Float advance)
     return Color{uint8_t(gradR), uint8_t(gradG), uint8_t(gradB)};
 }
 
-RGBEffect::Color dimColor(RGBEffect::Color color) {
+RGBEffect::Color RGBEffect::dimColor(RGBEffect::Color color) {
     return dimColor(color, _desc.dimmer);
 }
 
-RGBEffect::Color dimColor(RGBEffect::Color color, Float dim) {
-    unsigned int c = (color[0] * dim).scaleDown();
-    color[0] = std::min(c, 0xff);
-    unsigned int c = (color[1] * dim).scaleDown();
-    color[1] = std::min(c, 0xff);
-    unsigned int c = (color[2] * dim).scaleDown();
-    color[2] = std::min(c, 0xff);
+RGBEffect::Color RGBEffect::dimColor(RGBEffect::Color color, Float dim) {
+    {
+        unsigned int c = (color[0] * dim).scaleDown();
+        color[0] = std::min(c, 0xffu);
+    }
+    {
+        unsigned int c = (color[1] * dim).scaleDown();
+        color[1] = std::min(c, 0xffu);
+    }
+    {
+        unsigned int c = (color[2] * dim).scaleDown();
+        color[2] = std::min(c, 0xffu);
+    }
     return color;
 }
 

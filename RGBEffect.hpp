@@ -145,8 +145,8 @@ class RGBEffect
     unsigned int idxToPerpendicularY(unsigned int idx) const;
     std::array<uint8_t, 3> getTimeGradientColor(Float timeMultiplier = Float::scaleUp(1));
     std::array<uint8_t, 3> getGradientColor(Float advance);
-    void dimColor(Color& color);
-    static void dimColor(Color& color, Float);
+    Color dimColor(Color color);
+    static Color dimColor(Color color, Float);
     void beginCurrentCombo();
     StaticVector<std::array<uint8_t, 3>> const& getColor() const;
 

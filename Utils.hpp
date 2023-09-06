@@ -25,12 +25,12 @@ struct Utils {
     static Float sqrt2(Float x);
 };
 
-static auto milliss() {
+static inline auto milliss() {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
              std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
       .count();
 };
-static auto micross() {
+static inline auto micross() {
   return std::chrono::duration_cast<std::chrono::microseconds>(
              std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point{})
       .count();

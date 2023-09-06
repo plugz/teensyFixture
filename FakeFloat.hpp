@@ -23,7 +23,7 @@ template <typename TType, int TPrecisionBits> struct FakeFloat {
     explicit FakeFloat(TType v)
         : value(v) {}
 
-    template <typename T> static FakeFloat scaleUp(T v) { return FakeFloat{v * TPrecisionValue}; }
+    template <typename T> static FakeFloat scaleUp(T v) { return FakeFloat{(TType)(v * TPrecisionValue)}; }
 
     TType scaleDown() const { return value / TPrecisionValue; }
 

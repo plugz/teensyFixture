@@ -6,6 +6,17 @@
 
 #include <cstdint>
 
+// tower
+#define TWR_STRIPLEN 120
+#define TWR_HSTRIPCOUNT 4
+#define TWR_VSTRIPCOUNT 4
+#define TWR_WIDTH (TWR_STRIPLEN * TWR_HSTRIPCOUNT)
+#define TWR_HEIGHT (TWR_STRIPLEN * TWR_VSTRIPCOUNT)
+
+#define NUM_LEDS_PER_STRIP TWR_STRIPLEN
+#define NUM_STRIPS (8)
+#define NUM_LEDS (NUM_LEDS_PER_STRIP * NUM_STRIPS) // can not go higher than this - Runs out of SRAM
+
 class RGBEffectWrapper
 {
 public:

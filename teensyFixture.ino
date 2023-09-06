@@ -28,9 +28,10 @@
 
 /// DONT CHANGE unless you know the consequences...
 // 60leds*5m
-#define NUM_LEDS_PER_STRIP 120
-#define NUM_STRIPS 8
-#define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
+// defined in wrapper
+//#define NUM_LEDS_PER_STRIP 120
+//#define NUM_STRIPS 8
+//#define NUM_LEDS (NUM_LEDS_PER_STRIP*NUM_STRIPS)         // can not go higher than this - Runs out of SRAM
 
 // Define the array of leds
 DMAMEM uint8_t displayMemory[3 * NUM_LEDS];

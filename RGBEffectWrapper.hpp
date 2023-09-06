@@ -9,9 +9,11 @@
 class RGBEffectWrapper
 {
 public:
-    static const RGBEffect::PosArray posArray;
+    static RGBEffect::PosArray posArray;
 
-    static PosArray posArrayTower(StaticVector<int>& targetBuffer, bool hEn, Float hSize, Float hPos, bool vEn, Float vSize, float vPos);
+    static RGBEffect::PosArray posArrayTower(StaticVector<int>& targetBuffer,
+            bool hEn, Float hSize, Float hPos,
+            bool vEn, Float vSize, Float vPos);
 
 public:
     void begin(uint8_t* pixels, int pixelCount);

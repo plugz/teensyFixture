@@ -17,7 +17,7 @@ int posArrayBufferArray[NUM_LEDS] = {0};
 StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
 
 RGBEffect::PosArray RGBEffectWrapper::posArray =
-    RGBEffect::posArrayTower(posArrayBuffer,
+    RGBEffectWrapper::posArrayTower(posArrayBuffer,
             true, Float::scaleUp(1), Float::scaleUp(0.5f),
             true, Float::scaleUp(1), Float::scaleUp(0.5f));;
 
@@ -82,8 +82,10 @@ ColorVector sColors{
 };
 // clang-format on
 
-static RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& targetBuffer, bool hEn, Float hSize, Float hPos, bool vEn, Float vSize, float vPos) {
-    PosArray posArray;
+RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& targetBuffer,
+        bool hEn, Float hSize, Float hPos,
+        bool vEn, Float vSize, Float vPos) {
+    RGBEffect::PosArray posArray;
     posArray.width = TWR_WIDTH;
     posArray.height = TWR_HEIGHT;
     posArray.depth = 1;
@@ -96,13 +98,13 @@ static RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& ta
         const unsigned int begin = center - width / 2;
         const unsigned int end = center + width / 2;
         if (!hEn)
-            posArray[i] = -1;
+            posArray.array[i] = -1;
         else if (i < begin || i >= end)
-            posArray[i] = -1;
+            posArray.array[i] = -1;
         else
         {
             const unsigned int adv = i - begin;
-            posArray[i] = (adv * TWR_WIDTH) / width;
+            posArray.array[i] = (adv * TWR_WIDTH) / width;
         }
     }
     // vert
@@ -111,18 +113,18 @@ static RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& ta
 
         const unsigned int height = (TWR_HEIGHT * vSize).scaleDown();
         const unsigned int center = (TWR_HEIGHT * vPos).scaleDown();
-        const unsigned int begin = center - width / 2;
-        const unsigned int end = center + width / 2;
+        const unsigned int begin = center - height / 2;
+        const unsigned int end = center + height / 2;
         if (!vEn)
-            posArray[i] = -1;
+            posArray.array[i] = -1;
         else if (j < begin || j >= end)
-            posArray[i] = -1;
+            posArray.array[i] = -1;
         else
         {
             const unsigned int adv = j - begin;
 
             //            x              y
-            posArray[i] = TWR_STRIPLEN + ((adv * TWR_WIDTH) / width) * posArray.width;
+            posArray.array[i] = TWR_STRIPLEN + ((adv * TWR_WIDTH) / height) * posArray.width;
         }
     }
     return posArray;
@@ -233,12 +235,12 @@ void RGBEffectWrapper::pat1ChangeDim(Float dim) {
 }
 
 void RGBEffectWrapper::hPartEnable(bool enable) {
-    hPartEnable = enable;
+    _hPartEnable = enable;
     updatePosArray();
 }
 
 void RGBEffectWrapper::vPartEnable(bool enable) {
-    vPartEnable = enable;
+    _vPartEnable = enable;
     updatePosArray();
 }
 

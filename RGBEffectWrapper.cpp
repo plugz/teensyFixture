@@ -164,13 +164,13 @@ void RGBEffectWrapper::pat1Enable(bool enable) {
 }
 
 void RGBEffectWrapper::pat0ChangeDim(Float dim) {
-    LOGLN_DEBUG("pat0 speed %08x", (unsigned)dim.value);
+    LOGLN_DEBUG("pat0 dim %08x", (unsigned)dim.value);
     _pat0Dim = dim;
     _pat0Effect.setDimmer(_pat0Dim);
 }
 
 void RGBEffectWrapper::pat1ChangeDim(Float dim) {
-    LOGLN_DEBUG("pat1 speed %08x", (unsigned)dim.value);
+    LOGLN_DEBUG("pat1 dim %08x", (unsigned)dim.value);
     _pat1Dim = dim;
     _pat1Effect.setDimmer(_pat0Dim);
 }

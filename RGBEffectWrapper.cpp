@@ -181,7 +181,8 @@ void RGBEffectWrapper::pat1ChangeDim(Float dim) {
 
 bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     static unsigned long prevMillis = 0;
-    static unsigned long prevEffectMillis = 0;
+    static unsigned long pat0PrevEffectMillis = 0;
+    static unsigned long pat1PrevEffectMillis = 0;
 
     auto dMillis = currentMillis - prevMillis;
 
@@ -191,21 +192,23 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     bool ret = false;
 
     // pat0
-    if (_pat0Enable)
     {
-        unsigned long effectMillis = prevEffectMillis + (dMillis * _pat0Speed).scaleDown();
-        ret |= _pat0Effect.refreshPixels(effectMillis);
+        unsigned long effectMillis = pat0PrevEffectMillis + (dMillis * _pat0Speed).scaleDown();
+        if (_pat0Enable)
+            ret |= _pat0Effect.refreshPixels(effectMillis);
+        pat0PrevEffectMillis = effectMillis;
     }
 
     // pat1
-    if (_pat1Enable)
     {
-        unsigned long effectMillis = prevEffectMillis + (dMillis * _pat1Speed).scaleDown();
-        ret |= _pat1Effect.refreshPixels(effectMillis);
+        unsigned long effectMillis = pat1PrevEffectMillis + (dMillis * _pat1Speed).scaleDown();
+        if (_pat1Enable)
+            ret |= _pat1Effect.refreshPixels(effectMillis);
+        pat1PrevEffectMillis = effectMillis;
     }
 
     {
-        unsigned long effectMillis = prevEffectMillis + dMillis;
+        unsigned long effectMillis = prevMillis + dMillis;
         if (_smoothOffFlashing)
             ret |= _smoothOffEffect.refreshPixels(effectMillis);
         if (_fullOffFlashing)
@@ -217,7 +220,6 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     }
 
     prevMillis = currentMillis;
-    prevEffectMillis = effectMillis;
 
     return ret;
 }

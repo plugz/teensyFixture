@@ -57,10 +57,10 @@ EffectDescVector const sEffects{
 };
 // clang-format on
 
-RGBEffect::Desc smoothOffDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 1000, RGBEffectMixingMode::SUB, RGBEffectColor::WHITE};
-RGBEffect::Desc fullOffDesc{{RGBEffectPattern::STROBE}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::WHITE, Float::scaleUp(0)};
-RGBEffect::Desc smoothStrobeDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 800, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
-RGBEffect::Desc vnrStrobeDesc{{RGBEffectPattern::STROBE}, 120, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
+RGBEffect::Desc sSmoothOffDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 1000, RGBEffectMixingMode::SUB, RGBEffectColor::WHITE};
+RGBEffect::Desc sFullOffDesc{{RGBEffectPattern::STROBE}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::WHITE, Float::scaleUp(0)};
+RGBEffect::Desc sSmoothStrobeDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 800, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
+RGBEffect::Desc sVnrStrobeDesc{{RGBEffectPattern::STROBE}, 120, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
 
 using ColorVector = StaticVector2<RGBEffectColor, 64>;
 
@@ -83,82 +83,88 @@ void RGBEffectWrapper::begin(uint8_t* pixels, int pixelCount) {
     begin();
 }
 
-void RGBEffectWrapper::startFlash() { _flashing = true; }
-
-void RGBEffectWrapper::stopFlash() { _flashing = false; }
-
-void RGBEffectWrapper::prevMode() {
-    _currentEffectsIdx = (_currentEffectsIdx + (sEffects.size - 1)) % (sEffects.size);
-
-    begin();
+void RGBEffectWrapper::flashSmoothOff(bool enable) {
+    _smoothOffFlashing = enable;
 }
 
-void RGBEffectWrapper::nextMode() {
-    _currentEffectsIdx = (_currentEffectsIdx + 1) % (sEffects.size);
-
-    begin();
+void RGBEffectWrapper::flashFullOff(bool enable) {
+    _fullOffFlashing = enable;
 }
 
-void RGBEffectWrapper::begin() {
-    LOGLN_VERBOSE("begin 2");
-
-    LOGLN_VERBOSE("start effects");
-    unsigned int idx = 0;
-    for (auto effectDesc : sEffects[_currentEffectsIdx].effects) {
-        LOGLN_VERBOSE("idx=%u", idx);
-        unsigned int colorIdx = std::min(idx, sColors[_currentColorsIdx].colors.size);
-
-        LOGLN_VERBOSE("colorIdx=%u, _currentColorsIdx=%u", colorIdx, _currentColorsIdx);
-        ++_currentEffects.size;
-
-        effectDesc.color = sColors[_currentColorsIdx].colors[colorIdx];
-        LOGLN_VERBOSE("begincurrentEffect");
-        _currentEffects[idx].begin(effectDesc, _pixels, _pixelCount, posArray);
-        ++idx;
-    }
-
-    LOGLN_VERBOSE("start strobe effects");
-    idx = 0;
-    for (auto strobeEffectDesc : sEffects[_currentEffectsIdx].strobeEffects) {
-        unsigned int colorIdx = std::min(idx, sColors[_currentColorsIdx].strobeColors.size);
-
-        ++_currentStrobeEffects.size;
-
-        strobeEffectDesc.color = sColors[_currentColorsIdx].colors[colorIdx];
-        _currentStrobeEffects[idx].begin(strobeEffectDesc, _pixels, _pixelCount, posArray);
-        ++idx;
-    }
+void RGBEffectWrapper::flashSmoothStrobe(bool enable) {
+    _smoothStrobeFlashing = enable;
 }
 
-void RGBEffectWrapper::prevColor() {
-    _currentColorsIdx = (_currentColorsIdx + (sColors.size - 1)) % (sColors.size);
+void RGBEffectWrapper::flashVnrStrobe(bool enable) {
+    _vnrStrobeFlashing = enable;
+}
+
+void RGBEffectWrapper::pat0PrevMode() {
+    _pat0EffectIdx = (_pat0EffectIdx + (sEffects.size - 1)) % (sEffects.size);
+
+    pat0Begin();
+}
+
+void RGBEffectWrapper::pat0NextMode() {
+    _pat0EffectIdx = (_pat0EffectIdx + 1) % (sEffects.size);
+
+    pat0Begin();
+}
+
+void RGBEffectWrapper::pat1PrevMode() {
+    _pat1EffectIdx = (_pat1EffectIdx + (sEffects.size - 1)) % (sEffects.size);
+
+    pat1Begin();
+}
+
+void RGBEffectWrapper::pat1NextMode() {
+    _pat1EffectIdx = (_pat1EffectIdx + 1) % (sEffects.size);
+
+    pat1Begin();
+}
+
+void RGBEffectWrapper::pat0PrevColor() {
+    _pat0ColorIdx = (_pat0ColorIdx + (sColors.size - 1)) % (sColors.size);
 
     updateColor();
 }
 
-void RGBEffectWrapper::nextColor() {
-    _currentColorsIdx = (_currentColorsIdx + 1) % (sColors.size);
+void RGBEffectWrapper::pat0NextColor() {
+    _pat0ColorIdx = (_pat0ColorIdx + 1) % (sColors.size);
 
     updateColor();
 }
 
-void RGBEffectWrapper::updateColor() {
-    unsigned int idx = 0;
-    for (auto& effect : _currentEffects) {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].colors.size);
-        effect.setColor(sColors[_currentColorsIdx].colors[colorIdx]);
-        ++idx;
-    }
-    idx = 0;
-    for (auto& strobeEffect : _currentStrobeEffects) {
-        unsigned int colorIdx = MYMIN(idx, sColors[_currentColorsIdx].strobeColors.size);
-        strobeEffect.setColor(sColors[_currentColorsIdx].strobeColors[colorIdx]);
-        ++idx;
-    }
+void RGBEffectWrapper::pat1PrevColor() {
+    _pat1ColorIdx = (_pat1ColorIdx + (sColors.size - 1)) % (sColors.size);
+
+    updateColor();
 }
 
-void RGBEffectWrapper::changeSpeed(Float speed) {
-    _speed = speed;
+void RGBEffectWrapper::pat1NextColor() {
+    _pat1ColorIdx = (_pat1ColorIdx + 1) % (sColors.size);
+
+    updateColor();
+}
+
+void RGBEffectWrapper::pat0ChangeSpeed(Float multiplier) {
+    _pat0Speed = multiplier;
+}
+
+void RGBEffectWrapper::pat1ChangeSpeed(Float multiplier) {
+    _pat1Speed = multiplier;
+}
+
+void RGBEffectWrapper::pat0ChangeDim(Float dim) {
+    LOGLN_DEBUG("pat0 speed %032b", (unsigned)dim.value);
+    _pat0Dim = dim;
+    _pat0Effect.setDimmer(_pat0Dim);
+}
+
+void RGBEffectWrapper::pat1ChangeDim(Float dim) {
+    LOGLN_DEBUG("pat1 speed %032b", (unsigned)dim.value);
+    _pat1Dim = dim;
+    _pat1Effect.setDimmer(_pat0Dim);
 }
 
 bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
@@ -173,16 +179,61 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
 
     bool ret = false;
 
-    for (auto& effect : _currentEffects)
-        ret |= effect.refreshPixels(effectMillis);
-
-    if (_flashing) {
-        for (auto& strobeEffect : _currentStrobeEffects)
-            ret |= strobeEffect.refreshPixels(effectMillis);
+    // pat0
+    {
+        ret |= _pat0Effect.refreshPixels(effectMillis);
     }
+
+    // pat1
+    {
+        ret |= _pat1Effect.refreshPixels(effectMillis);
+    }
+
+    if (_smoothOffFlashing)
+        ret |= _smoothOff;
+    if (_fullOffFlashing)
+        ret |= _fullOff;
+    if (_smoothStrobeFlashing)
+        ret |= _smoothStrobe;
+    if (_vnrStrobeFlashing)
+        ret |= _vnrStrobe;
 
     prevMillis = currentMillis;
     prevEffectMillis = effectMillis;
 
     return ret;
+}
+
+void RGBEffectWrapper::updateColor() {
+    _pat0Effect.setColor(sColors[_pat0ColorIdx]);
+    _pat1Effect.setColor(sColors[_pat1ColorIdx]);
+}
+
+void RGBEffectWrapper::begin() {
+
+    LOGLN_VERBOSE("start effects");
+
+    pat0Begin();
+    pat1Begin();
+
+    LOGLN_VERBOSE("start strobe effects");
+
+    _smoothOffEffect.begin(sSmoothOffDesc, _pixels, _pixelCount, posArray);
+    _fullOffEffect(sFullOffDesc, _pixels, _pixelCount, posArray);
+    _smoothStrobeEffect(sSmoothStrobeDesc, _pixels, _pixelCount, posArray);
+    _vnrStrobeEffect(sVnrStrobeDesc, _pixels, _pixelCount, posArray);
+}
+
+void RGBEffectWrapper::pat0Begin() {
+    auto effectDesc = sEffects[_pat0EffectIdx];
+    effectDesc.color = sColors[_pat0ColorIdx];
+    effectDesc.dimmer = _pat0Dim;
+    _pat0Effect.begin(effectDesc, _pixels, _pixelCount, posArray);
+}
+
+void RGBEffectWrapper::pat1Begin() {
+    auto effectDesc = sEffects[_pat1EffectIdx];
+    effectDesc.color = sColors[_pat1ColorIdx];
+    effectDesc.dimmer = _pat1Dim;
+    _pat1Effect.begin(effectDesc, _pixels, _pixelCount, posArray);
 }

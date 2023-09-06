@@ -51,40 +51,24 @@ void flashLeds() {
     }
 }
 
+    void flashSmoothOff(bool enable);
+    void flashFullOff(bool enable);
+    void flashSmoothStrobe(bool enable);
+    void flashVnrStrobe(bool enable);
+
 static void btnCallback(uint8_t idx, bool val) {
     switch (idx) {
     case 0: { // btn strob soft
-        if (val) {
-            rgbEffect.startFlash();
-        }
-        else {
-            rgbEffect.stopFlash();
-        }
-        return;
+        rgbEffect.flashSmoothStrobe(val);
     } break;
     case 1: { // btn strob vnr
-        if (val) {
-            rgbEffect.startFlash();
-        }
-        else {
-            rgbEffect.stopFlash();
-        }
+        rgbEffect.flashVnrStrobe(val);
     } break;
     case 2: { // btn smooth strobe blackout
-        if (val) {
-            rgbEffect.startFlash();
-        }
-        else {
-            rgbEffect.stopFlash();
-        }
+        rgbEffect.flashSmoothOff(val);
     } break;
     case 3: { // btn full blackout
-        if (val) {
-            rgbEffect.startFlash();
-        }
-        else {
-            rgbEffect.stopFlash();
-        }
+        rgbEffect.flashFullOff(val);
     } break;
     case 4: { // switch Hpart enable
     } break;
@@ -107,6 +91,13 @@ static void btnCallback(uint8_t idx, bool val) {
     case 13: { // btn encoder 3 push
     } break;
     }
+
+    // TODO
+//        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
+//    switch (idx) {
+//    case 0:
+//    default: {
+//        rgbEffect.changeSpeed(Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
 }
 
 static void encoderCallback(uint8_t idx, bool val) {
@@ -115,27 +106,27 @@ static void encoderCallback(uint8_t idx, bool val) {
     switch (idx) {
     case 0: { // pattern 0 color
         if (val)
-            rgbEffect.nextColor();
+            rgbEffect.pat0NextColor();
         else
-            rgbEffect.prevColor();
+            rgbEffect.pat0PrevColor();
     } break;
     case 1: { // pattern 0 pattern
         if (val)
-            rgbEffect.nextMode();
+            rgbEffect.pat0NextMode();
         else
-            rgbEffect.prevMode();
+            rgbEffect.pat0PrevMode();
     } break;
     case 2: { // pattern 1 color
         if (val)
-            rgbEffect.nextColor();
+            rgbEffect.pat1NextColor();
         else
-            rgbEffect.prevColor();
+            rgbEffect.pat1PrevColor();
     } break;
-    case 3: { // pattern 0 color
+    case 3: { // pattern 1 pattern
         if (val)
-            rgbEffect.nextMode();
+            rgbEffect.pat1NextMode();
         else
-            rgbEffect.prevMode();
+            rgbEffect.pat1PrevMode();
     } break;
     }
 }
@@ -151,31 +142,12 @@ static void faderCallback(uint8_t idx, uint16_t val) {
     case 3: { // Vpart size
     } break;
     case 4: { // pattern0 dim
+        rgbEffect.pat0ChangeDim(Float::scaleUp(val) / MYMCP3008_ANALOG_VALUECOUNT);
     } break;
     case 5: { // pattern1 dim
+        rgbEffect.pat1ChangeDim(Float::scaleUp(val) / MYMCP3008_ANALOG_VALUECOUNT);
     } break;
     }
-
-    // TODO
-//        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
-//    switch (idx) {
-//    case 0:
-//    default: {
-//        rgbEffect.changeSpeed(Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
-//    } break;
-//    case 1: {
-//        val = 0;
-//    } break;
-//    case 2: {
-//        val = 0;
-//    } break;
-//    case 3: {
-//        val = 0;
-//    } break;
-//    case 4: {
-//        val = 0;
-//    } break;
-//    }
 }
 
 void setup() {

@@ -78,11 +78,19 @@ static void btnCallback(uint8_t idx, bool val) {
         rgbEffect.pat0Enable(val);
     } break;
     case 7: { // switch pattern0 turbo
+        if (val)
+            rgbEffect.pat0ChangeSpeed(Float::scaleUp(4.0f));
+        else
+            rgbEffect.pat0ChangeSpeed(Float::scaleUp(1));
     } break;
     case 8: { // switch pattern1 enable
         rgbEffect.pat1Enable(val);
     } break;
     case 9: { // switch pattern1 turbo
+        if (val)
+            rgbEffect.pat1ChangeSpeed(Float::scaleUp(4.0f));
+        else
+            rgbEffect.pat1ChangeSpeed(Float::scaleUp(1));
     } break;
     case 10: { // btn encoder 0 push
     } break;
@@ -93,13 +101,6 @@ static void btnCallback(uint8_t idx, bool val) {
     case 13: { // btn encoder 3 push
     } break;
     }
-
-    // TODO
-//        rgbEffect.changeSpeed(Float::scaleUp(0.5));//Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
-//    switch (idx) {
-//    case 0:
-//    default: {
-//        rgbEffect.changeSpeed(Float::scaleUp(val) / Float::scaleUp(MYMCP3008_ANALOG_VALUEMAX));
 }
 
 static void encoderCallback(uint8_t idx, bool val) {

@@ -148,18 +148,22 @@ void RGBEffectWrapper::pat1NextColor() {
 }
 
 void RGBEffectWrapper::pat0ChangeSpeed(Float multiplier) {
+    LOGLN_DEBUG("pat0 speed %08x", (unsigned)multiplier.value);
     _pat0Speed = multiplier;
 }
 
 void RGBEffectWrapper::pat1ChangeSpeed(Float multiplier) {
+    LOGLN_DEBUG("pat1 speed %08x", (unsigned)multiplier.value);
     _pat1Speed = multiplier;
 }
 
 void RGBEffectWrapper::pat0Enable(bool enable) {
+    LOGLN_DEBUG("pat0 en %u", (unsigned)enable);
     _pat0Enable = enable;
 }
 
 void RGBEffectWrapper::pat1Enable(bool enable) {
+    LOGLN_DEBUG("pat1 en %u", (unsigned)enable);
     _pat1Enable = enable;
 }
 
@@ -179,11 +183,7 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     static unsigned long prevMillis = 0;
     static unsigned long prevEffectMillis = 0;
 
-    // TODO
-//    auto dMillis = Float::scaleUp(currentMillis - prevMillis) * _speed;
-//    unsigned long effectMillis = prevEffectMillis + dMillis.scaleDown();
     auto dMillis = currentMillis - prevMillis;
-    unsigned long effectMillis = prevEffectMillis + dMillis;
 
     if (dMillis < 16) // ~60fps
         return false;
@@ -193,23 +193,28 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     // pat0
     if (_pat0Enable)
     {
+        unsigned long effectMillis = prevEffectMillis + (dMillis * _pat0Speed).scaleDown();
         ret |= _pat0Effect.refreshPixels(effectMillis);
     }
 
     // pat1
     if (_pat1Enable)
     {
+        unsigned long effectMillis = prevEffectMillis + (dMillis * _pat1Speed).scaleDown();
         ret |= _pat1Effect.refreshPixels(effectMillis);
     }
 
-    if (_smoothOffFlashing)
-        ret |= _smoothOffEffect.refreshPixels(effectMillis);
-    if (_fullOffFlashing)
-        ret |= _fullOffEffect.refreshPixels(effectMillis);
-    if (_smoothStrobeFlashing)
-        ret |= _smoothStrobeEffect.refreshPixels(effectMillis);
-    if (_vnrStrobeFlashing)
-        ret |= _vnrStrobeEffect.refreshPixels(effectMillis);
+    {
+        unsigned long effectMillis = prevEffectMillis + dMillis;
+        if (_smoothOffFlashing)
+            ret |= _smoothOffEffect.refreshPixels(effectMillis);
+        if (_fullOffFlashing)
+            ret |= _fullOffEffect.refreshPixels(effectMillis);
+        if (_smoothStrobeFlashing)
+            ret |= _smoothStrobeEffect.refreshPixels(effectMillis);
+        if (_vnrStrobeFlashing)
+            ret |= _vnrStrobeEffect.refreshPixels(effectMillis);
+    }
 
     prevMillis = currentMillis;
     prevEffectMillis = effectMillis;

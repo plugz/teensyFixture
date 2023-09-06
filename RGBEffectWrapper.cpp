@@ -185,6 +185,9 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     auto dMillis = currentMillis - prevMillis;
     unsigned long effectMillis = prevEffectMillis + dMillis;
 
+    if (dMillis < 16) // ~60fps
+        return false;
+
     bool ret = false;
 
     // pat0

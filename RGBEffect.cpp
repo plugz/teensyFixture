@@ -339,7 +339,7 @@ bool RGBEffect::refreshPixels(unsigned long currentMillis)
         }
         return true;
     }
-    return false;
+    //return false;
 }
 
 Float RGBEffect::advance() const {

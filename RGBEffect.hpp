@@ -47,6 +47,14 @@ enum class RGBEffectColor
     GOLD,
     WHITEMIXED,
     PINK,
+    ETHEREAL,
+    WARM_SUNSET,
+    DEEP_BLUE,
+    MARGUERITA,
+    PEACH,
+    FRESH,
+    VIOLET_SHADOWS,
+    DARK_SIDE,
 
     COUNT
 };

@@ -603,6 +603,65 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
         {0xff, 0x69, 0xb4},
         {0xda, 0x70, 0xd6},
     };
+
+    static const ColorArray etherealColors{
+        {0x00, 0x00, 0x00},
+        {0xff, 0x55, 0xff},
+        {0xaa, 0xbb, 0xbb},
+        {0x55, 0x55, 0xff},
+        {0x99, 0x99, 0xbb},
+    };
+
+    static const ColorArray warmSunsetColors{
+        {0xfd, 0x7f, 0x20},
+        {0xfc, 0x2e, 0x20},
+        {0xfd, 0xb7, 0x50},
+        {0x01, 0x01, 0x00},
+    };
+
+    static const ColorArray deepBlueColors{
+        {0x05, 0x0a, 0x30},
+        {0x00, 0x0c, 0x66},
+        {0x00, 0x00, 0xff},
+        {0x7e, 0xc8, 0xe3},
+    };
+
+    static const ColorArray margueritaColors{
+        {0x0a, 0x70, 0x29},
+        {0xfe, 0xde, 0x00},
+        {0xc8, 0xdf, 0x52},
+        {0xdb, 0xe8, 0xd8},
+    };
+
+    static const ColorArray peachColors{
+        {0x19, 0x02, 0x04},
+        {0xff, 0x89, 0x76},
+        {0xcb, 0x4e, 0x47},
+        {0xff, 0xcb, 0xa4},
+    };
+
+    static const ColorArray freshColors{
+        {0x89, 0xbe, 0x63},
+        {0xaf, 0xcc, 0xa9},
+        {0xcd, 0xef, 0xee},
+        {0xec, 0xf9, 0xf2},
+    };
+
+    static const ColorArray violetShadowsColors{
+        {0x3d, 0x39, 0x3b},
+        {0x7e, 0x1e, 0x80},
+        {0x95, 0x05, 0xe3},
+        {0xb6, 0x37, 0xfb},
+    };
+
+    static const ColorArray darkSideColors{
+        {0x10, 0x10, 0x10},
+        {0xfb, 0xc1, 0x00},
+        {0x00, 0x00, 0x00},
+        {0xf9, 0xfa, 0xfc},
+        {0x20, 0x20, 0x20},
+    };
+
     // clang-format on
 
     switch (_desc.color)
@@ -638,6 +697,22 @@ StaticVector<RGBEffect::Color> const& RGBEffect::getColor() const
         return whiteMixedColors;
     case RGBEffectColor::PINK:
         return pinkColors;
+    case RGBEffectColor::ETHEREAL:
+        return etherealColors;
+    case RGBEffectColor::WARM_SUNSET:
+        return warmSunsetColors;
+    case RGBEffectColor::DEEP_BLUE:
+        return deepBlueColors;
+    case RGBEffectColor::MARGUERITA:
+        return margueritaColors;
+    case RGBEffectColor::PEACH:
+        return peachColors;
+    case RGBEffectColor::FRESH:
+        return freshColors;
+    case RGBEffectColor::VIOLET_SHADOWS:
+        return violetShadowsColors;
+    case RGBEffectColor::DARK_SIDE:
+        return darkSideColors;
     }
 }
 

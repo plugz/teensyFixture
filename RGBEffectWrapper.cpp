@@ -14,42 +14,31 @@ using EffectDescVector = StaticVector2<RGBEffect::Desc, 64>;
 
 // clang-format off
 EffectDescVector const sEffects{
-    {
-        {RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE
-    },
-    {
-        {RGBEffectPattern::STRIPE_SMOOTH}, 1700, RGBEffectMixingMode::SUB
-    },
-    {
-        {RGBEffectPattern::ROTATION}, 1700, RGBEffectMixingMode::REPLACE
-    },
-    {
-        {RGBEffectPattern::ROTATION_THIN}, 400, RGBEffectMixingMode::SUB
-    },
-    {
-        {RGBEffectPattern::ROTATION, RGBEffectAxis::VERTICAL}, 1700, RGBEffectMixingMode::REPLACE
-    },
-    {
-        {RGBEffectPattern::ROTATION_THIN, RGBEffectAxis::VERTICAL}, 400, RGBEffectMixingMode::SUB
-    },
-    {
-        {RGBEffectPattern::ROTATION_SMOOTH}, 1300, RGBEffectMixingMode::ADD
-    },
-    {
-        {RGBEffectPattern::ROTATION_SMOOTH_THIN}, 4000, RGBEffectMixingMode::SUB
-    },
-    {
-        {RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1700, RGBEffectMixingMode::REPLACE
-    },
-    {
-        {RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL, RGBEffectDirection::FORWARD}, 1200, RGBEffectMixingMode::MAX
-    },
-    {
-        {RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1700, RGBEffectMixingMode::REPLACE
-    },
-    {
-        {RGBEffectPattern::STRIPE, RGBEffectAxis::HORIZONTAL, RGBEffectDirection::BACKWARD}, 1200, RGBEffectMixingMode::MAX
-    },
+    {{RGBEffectPattern::PLASMA}, 4000, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::STRIPE}, 2400, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::STRIPE}, 2430, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::STRIPE}, 2460, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL}, 2500, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL}, 2530, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::STRIPE, RGBEffectAxis::VERTICAL}, 2560, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::STRIPE_SMOOTH}, 2600, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::STRIPE_SMOOTH}, 2630, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::STRIPE_SMOOTH}, 2660, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL}, 2700, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL}, 2730, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::STRIPE_SMOOTH, RGBEffectAxis::VERTICAL}, 2760, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::ROTATION}, 2800, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::ROTATION}, 2830, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::ROTATION}, 2860, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::ROTATION_THIN}, 2900, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::ROTATION_THIN}, 2930, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::ROTATION_THIN}, 2960, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::ROTATION_SMOOTH}, 3000, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::ROTATION_SMOOTH}, 3030, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::ROTATION_SMOOTH}, 3060, RGBEffectMixingMode::DIFFERENCE},
+    {{RGBEffectPattern::ROTATION_SMOOTH_THIN}, 3100, RGBEffectMixingMode::REPLACE},
+    {{RGBEffectPattern::ROTATION_SMOOTH_THIN}, 3130, RGBEffectMixingMode::SUB},
+    {{RGBEffectPattern::ROTATION_SMOOTH_THIN}, 3160, RGBEffectMixingMode::DIFFERENCE},
 };
 // clang-format on
 
@@ -62,12 +51,27 @@ using ColorVector = StaticVector2<RGBEffectColor, 64>;
 
 // clang-format off
 ColorVector sColors{
-    RGBEffectColor::OCEAN,
     RGBEffectColor::FLAME,
+    RGBEffectColor::OCEAN,
     RGBEffectColor::GRASS,
     RGBEffectColor::RAINBOW,
     RGBEffectColor::PINK,
-    RGBEffectColor::GOLD
+    RGBEffectColor::GOLD,
+    RGBEffectColor::WHITEMIXED,
+    RGBEffectColor::RED,
+    RGBEffectColor::YELLOW,
+    RGBEffectColor::GREEN,
+    RGBEffectColor::CYAN,
+    RGBEffectColor::BLUE,
+    RGBEffectColor::MAGENTA,
+    RGBEffectColor::ETHEREAL,
+    RGBEffectColor::WARM_SUNSET,
+    RGBEffectColor::DEEP_BLUE,
+    RGBEffectColor::MARGUERITA,
+    RGBEffectColor::PEACH,
+    RGBEffectColor::FRESH,
+    RGBEffectColor::VIOLET_SHADOWS,
+    RGBEffectColor::DARK_SIDE,
 };
 // clang-format on
 

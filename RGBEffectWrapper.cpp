@@ -2,7 +2,12 @@
 
 #include "Log.hpp"
 
-#define MYMIN(x, y) ((x) < (y) ? (x) : (y))
+// tower
+#define TWR_STRIPLEN 120
+#define TWR_HSTRIPCOUNT 4
+#define TWR_VSTRIPCOUNT 4
+#define TWR_WIDTH (TWR_STRIPLEN * TWR_HSTRIPCOUNT)
+#define TWR_HEIGHT (TWR_STRIPLEN * TWR_VSTRIPCOUNT)
 
 #define NUM_LEDS_PER_STRIP TWR_STRIPLEN
 #define NUM_STRIPS (8)
@@ -11,8 +16,10 @@
 int posArrayBufferArray[NUM_LEDS] = {0};
 StaticVector<int> posArrayBuffer{posArrayBufferArray, ARRAY_COUNT(posArrayBufferArray)};
 
-const RGBEffect::PosArray RGBEffectWrapper::posArray =
-    RGBEffect::posArrayTower(posArrayBuffer);
+RGBEffect::PosArray RGBEffectWrapper::posArray =
+    RGBEffect::posArrayTower(posArrayBuffer,
+            true, Float::scaleUp(1), Float::scaleUp(0.5f),
+            true, Float::scaleUp(1), Float::scaleUp(0.5f));;
 
 using EffectDescVector = StaticVector2<RGBEffect::Desc, 64>;
 
@@ -74,6 +81,52 @@ ColorVector sColors{
     RGBEffectColor::GOLD
 };
 // clang-format on
+
+static RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& targetBuffer, bool hEn, Float hSize, Float hPos, bool vEn, Float vSize, float vPos) {
+    PosArray posArray;
+    posArray.width = TWR_WIDTH;
+    posArray.height = TWR_HEIGHT;
+    posArray.depth = 1;
+    posArray.array = targetBuffer;
+    unsigned int i = 0;
+    // horiz
+    for (; i < TWR_WIDTH; ++i) {
+        const unsigned int width = (TWR_WIDTH * hSize).scaleDown();
+        const unsigned int center = (TWR_WIDTH * hPos).scaleDown();
+        const unsigned int begin = center - width / 2;
+        const unsigned int end = center + width / 2;
+        if (!hEn)
+            posArray[i] = -1;
+        else if (i < begin || i >= end)
+            posArray[i] = -1;
+        else
+        {
+            const unsigned int adv = i - begin;
+            posArray[i] = (adv * TWR_WIDTH) / width;
+        }
+    }
+    // vert
+    for (; i < TWR_WIDTH + TWR_HEIGHT; ++i) {
+        unsigned int j = i - TWR_WIDTH;
+
+        const unsigned int height = (TWR_HEIGHT * vSize).scaleDown();
+        const unsigned int center = (TWR_HEIGHT * vPos).scaleDown();
+        const unsigned int begin = center - width / 2;
+        const unsigned int end = center + width / 2;
+        if (!vEn)
+            posArray[i] = -1;
+        else if (j < begin || j >= end)
+            posArray[i] = -1;
+        else
+        {
+            const unsigned int adv = j - begin;
+
+            //            x              y
+            posArray[i] = TWR_STRIPLEN + ((adv * TWR_WIDTH) / width) * posArray.width;
+        }
+    }
+    return posArray;
+}
 
 void RGBEffectWrapper::begin(uint8_t* pixels, int pixelCount) {
     LOGLN_VERBOSE("begin 1");
@@ -179,6 +232,36 @@ void RGBEffectWrapper::pat1ChangeDim(Float dim) {
     _pat1Effect.setDimmer(_pat1Dim);
 }
 
+void RGBEffectWrapper::hPartEnable(bool enable) {
+    hPartEnable = enable;
+    updatePosArray();
+}
+
+void RGBEffectWrapper::vPartEnable(bool enable) {
+    vPartEnable = enable;
+    updatePosArray();
+}
+
+void RGBEffectWrapper::hPartSize(Float size) {
+    _hPartSize = size;
+    updatePosArray();
+}
+
+void RGBEffectWrapper::vPartSize(Float size) {
+    _vPartSize = size;
+    updatePosArray();
+}
+
+void RGBEffectWrapper::hPartPos(Float pos) {
+    _hPartPos = pos;
+    updatePosArray();
+}
+
+void RGBEffectWrapper::vPartPos(Float pos) {
+    _vPartPos = pos;
+    updatePosArray();
+}
+
 bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     static unsigned long prevMillis = 0;
     static unsigned long pat0PrevEffectMillis = 0;
@@ -227,6 +310,12 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
 void RGBEffectWrapper::updateColor() {
     _pat0Effect.setColor(sColors[_pat0ColorIdx]);
     _pat1Effect.setColor(sColors[_pat1ColorIdx]);
+}
+
+void RGBEffectWrapper::updatePosArray() {
+    posArray = posArrayTower(posArrayBuffer,
+            _hPartEnable, _hPartSize, _hPartPos,
+            _vPartEnable, _hPartSize, _hPartPos);;
 }
 
 void RGBEffectWrapper::begin() {

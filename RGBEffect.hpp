@@ -12,13 +12,6 @@
 #define ADJ_HEIGHT 60
 #define ADJ_DEPTH 30
 
-// tower
-#define TWR_STRIPLEN 120
-#define TWR_HSTRIPCOUNT 4
-#define TWR_VSTRIPCOUNT 4
-#define TWR_WIDTH (TWR_STRIPLEN * TWR_HSTRIPCOUNT)
-#define TWR_HEIGHT (TWR_STRIPLEN * TWR_VSTRIPCOUNT)
-
 enum class RGBEffectPattern
 {
     PLAIN,
@@ -131,7 +124,6 @@ class RGBEffect
                                          unsigned int height, unsigned int depth,
                                          StaticVector<int> const& ledArray);
     static PosArray posArrayAirDJ(StaticVector<int>& targetBuffer);
-    static PosArray posArrayTower(StaticVector<int>& targetBuffer);
 
     void setPattern(RGBEffectPattern pattern);
     void setAxis(RGBEffectAxis axis);

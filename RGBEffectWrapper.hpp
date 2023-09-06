@@ -11,6 +11,8 @@ class RGBEffectWrapper
 public:
     static const RGBEffect::PosArray posArray;
 
+    static PosArray posArrayTower(StaticVector<int>& targetBuffer, bool hEn, Float hSize, Float hPos, bool vEn, Float vSize, float vPos);
+
 public:
     void begin(uint8_t* pixels, int pixelCount);
     void flashSmoothOff(bool enable);
@@ -32,10 +34,18 @@ public:
     void pat0Enable(bool enable);
     void pat1Enable(bool enable);
 
+    void hPartEnable(bool enable);
+    void vPartEnable(bool enable);
+    void hPartSize(Float size);
+    void vPartSize(Float size);
+    void hPartPos(Float pos);
+    void vPartPos(Float pos);
+
     bool refreshPixels(unsigned long currentMillis);
 
 private:
     void updateColor();
+    void updatePosArray();
     void begin();
     void pat0Begin();
     void pat1Begin();
@@ -61,6 +71,13 @@ private:
     bool _fullOffFlashing = false;
     bool _smoothStrobeFlashing = false;
     bool _vnrStrobeFlashing = false;
+
+    bool _hPartEnable = true;
+    bool _vPartEnable = true;
+    Float _hPartSize = Float::scaleUp(1);
+    Float _hPartPos = Float::scaleUp(1);
+    Float _vPartSize = Float::scaleUp(0.5f);
+    Float _vPartPos = Float::scaleUp(0.5f);
 
     Float _speed = Float::scaleUp(1);
 };

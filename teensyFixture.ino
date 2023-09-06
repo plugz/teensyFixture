@@ -71,8 +71,10 @@ static void btnCallback(uint8_t idx, bool val) {
         rgbEffect.flashFullOff(val);
     } break;
     case 4: { // switch Hpart enable
+        rgbEffect.hPartEnable(val);
     } break;
     case 5: { // switch Vpart enable
+        rgbEffect.vPartEnable(val);
     } break;
     case 6: { // switch pattern0 enable
         rgbEffect.pat0Enable(val);
@@ -135,20 +137,25 @@ static void encoderCallback(uint8_t idx, bool val) {
 }
 
 static void faderCallback(uint8_t idx, uint16_t val) {
+    Float scaledVal = Float::scaleUp(val) / MYMCP3008_ANALOG_VALUECOUNT;
     switch (idx) {
     case 0: { // Hpart pos
+        rgbEffect.hPartPos(scaledVal);
     } break;
     case 1: { // Hpart size
+        rgbEffect.hPartSize(scaledVal);
     } break;
     case 2: { // Vpart pos
+        rgbEffect.vPartPos(scaledVal);
     } break;
     case 3: { // Vpart size
+        rgbEffect.vPartSize(scaledVal);
     } break;
     case 4: { // pattern0 dim
-        rgbEffect.pat0ChangeDim(Float::scaleUp(val) / MYMCP3008_ANALOG_VALUECOUNT);
+        rgbEffect.pat0ChangeDim(scaledVal);
     } break;
     case 5: { // pattern1 dim
-        rgbEffect.pat1ChangeDim(Float::scaleUp(val) / MYMCP3008_ANALOG_VALUECOUNT);
+        rgbEffect.pat1ChangeDim(scaledVal);
     } break;
     }
 }

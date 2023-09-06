@@ -90,38 +90,38 @@ RGBEffect::PosArray RGBEffectWrapper::posArrayTower(StaticVector<int>& targetBuf
     posArray.height = TWR_HEIGHT;
     posArray.depth = 1;
     posArray.array = targetBuffer;
-    unsigned int i = 0;
+    int i = 0;
     // horiz
     for (; i < TWR_WIDTH; ++i) {
-        const unsigned int width = (TWR_WIDTH * hSize).scaleDown();
-        const unsigned int center = (TWR_WIDTH * hPos).scaleDown();
-        const unsigned int begin = center - width / 2;
-        const unsigned int end = center + width / 2;
+        int width = (TWR_WIDTH * hSize).scaleDown();
+        int center = (TWR_WIDTH * hPos).scaleDown();
+        int begin = center - width / 2;
+        int end = center + width / 2;
         if (!hEn)
             posArray.array[i] = -1;
         else if (i < begin || i >= end)
             posArray.array[i] = -1;
         else
         {
-            const unsigned int adv = i - begin;
+            const int adv = i - begin;
             posArray.array[i] = (adv * TWR_WIDTH) / width;
         }
     }
     // vert
     for (; i < TWR_WIDTH + TWR_HEIGHT; ++i) {
-        unsigned int j = i - TWR_WIDTH;
+        int j = i - TWR_WIDTH;
 
-        const unsigned int height = (TWR_HEIGHT * vSize).scaleDown();
-        const unsigned int center = (TWR_HEIGHT * vPos).scaleDown();
-        const unsigned int begin = center - height / 2;
-        const unsigned int end = center + height / 2;
+        int height = (TWR_HEIGHT * vSize).scaleDown();
+        int center = (TWR_HEIGHT * vPos).scaleDown();
+        int begin = center - height / 2;
+        int end = center + height / 2;
         if (!vEn)
             posArray.array[i] = -1;
         else if (j < begin || j >= end)
             posArray.array[i] = -1;
         else
         {
-            const unsigned int adv = j - begin;
+            int adv = j - begin;
 
             //            x              y
             posArray.array[i] = TWR_STRIPLEN + ((adv * TWR_WIDTH) / height) * posArray.width;
@@ -317,7 +317,7 @@ void RGBEffectWrapper::updateColor() {
 void RGBEffectWrapper::updatePosArray() {
     posArray = posArrayTower(posArrayBuffer,
             _hPartEnable, _hPartSize, _hPartPos,
-            _vPartEnable, _hPartSize, _hPartPos);;
+            _vPartEnable, _vPartSize, _vPartPos);;
 }
 
 void RGBEffectWrapper::begin() {

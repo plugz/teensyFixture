@@ -155,6 +155,14 @@ void RGBEffectWrapper::pat1ChangeSpeed(Float multiplier) {
     _pat1Speed = multiplier;
 }
 
+void RGBEffectWrapper::pat0Enable(bool enable) {
+    _pat0Enable = enable;
+}
+
+void RGBEffectWrapper::pat1Enable(bool enable) {
+    _pat1Enable = enable;
+}
+
 void RGBEffectWrapper::pat0ChangeDim(Float dim) {
     LOGLN_DEBUG("pat0 speed %032b", (unsigned)dim.value);
     _pat0Dim = dim;
@@ -180,11 +188,13 @@ bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {
     bool ret = false;
 
     // pat0
+    if (_pat0Enable)
     {
         ret |= _pat0Effect.refreshPixels(effectMillis);
     }
 
     // pat1
+    if (_pat1Enable)
     {
         ret |= _pat1Effect.refreshPixels(effectMillis);
     }

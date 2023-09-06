@@ -75,10 +75,12 @@ static void btnCallback(uint8_t idx, bool val) {
     case 5: { // switch Vpart enable
     } break;
     case 6: { // switch pattern0 enable
+        rgbEffect.pat0Enable(val);
     } break;
     case 7: { // switch pattern0 turbo
     } break;
     case 8: { // switch pattern1 enable
+        rgbEffect.pat1Enable(val);
     } break;
     case 9: { // switch pattern1 turbo
     } break;

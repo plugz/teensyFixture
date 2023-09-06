@@ -29,6 +29,8 @@ public:
     void pat1ChangeSpeed(Float multiplier);
     void pat0ChangeDim(Float dim);
     void pat1ChangeDim(Float dim);
+    void pat0Enable(bool enable);
+    void pat1Enable(bool enable);
 
     bool refreshPixels(unsigned long currentMillis);
 
@@ -47,6 +49,8 @@ private:
     Float _pat1Speed = Float::scaleUp(1);
     Float _pat0Dim = Float::scaleUp(1);
     Float _pat1Dim = Float::scaleUp(1);
+    bool _pat0Enable = true;
+    bool _pat1Enable = true;
     RGBEffect _pat0Effect;
     RGBEffect _pat1Effect;
     RGBEffect _smoothOffEffect;

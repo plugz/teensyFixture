@@ -248,6 +248,7 @@ void RGBEffectWrapper::pat0Begin() {
     auto effectDesc = sEffects[_pat0EffectIdx];
     effectDesc.color = sColors[_pat0ColorIdx];
     effectDesc.dimmer = _pat0Dim;
+    effectDesc.mixingMode = RGBEffectMixingMode::REPLACE;
     _pat0Effect.begin(effectDesc, _pixels, _pixelCount, posArray);
 }
 
@@ -255,5 +256,7 @@ void RGBEffectWrapper::pat1Begin() {
     auto effectDesc = sEffects[_pat1EffectIdx];
     effectDesc.color = sColors[_pat1ColorIdx];
     effectDesc.dimmer = _pat1Dim;
+    if (effectDesc.mixingMode == RGBEffectMixingMode::REPLACE)
+        effectDesc.mixingMode = RGBEffectMixingMode::ADD;
     _pat1Effect.begin(effectDesc, _pixels, _pixelCount, posArray);
 }

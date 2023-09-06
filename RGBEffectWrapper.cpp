@@ -60,7 +60,7 @@ EffectDescVector const sEffects{
 RGBEffect::Desc sSmoothOffDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 1000, RGBEffectMixingMode::SUB, RGBEffectColor::WHITE};
 RGBEffect::Desc sFullOffDesc{{RGBEffectPattern::PLAIN}, 1000, RGBEffectMixingMode::REPLACE, RGBEffectColor::BLACK, Float::scaleUp(0)};
 RGBEffect::Desc sSmoothStrobeDesc{{RGBEffectPattern::SMOOTHER_ON_OFF}, 800, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
-RGBEffect::Desc sVnrStrobeDesc{{RGBEffectPattern::STROBE}, 120, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
+RGBEffect::Desc sVnrStrobeDesc{{RGBEffectPattern::STROBE}, 110, RGBEffectMixingMode::MAX, RGBEffectColor::WHITE};
 
 using ColorVector = StaticVector2<RGBEffectColor, 64>;
 
@@ -176,7 +176,7 @@ void RGBEffectWrapper::pat0ChangeDim(Float dim) {
 void RGBEffectWrapper::pat1ChangeDim(Float dim) {
     LOGLN_DEBUG("pat1 dim %08x", (unsigned)dim.value);
     _pat1Dim = dim;
-    _pat1Effect.setDimmer(_pat0Dim);
+    _pat1Effect.setDimmer(_pat1Dim);
 }
 
 bool RGBEffectWrapper::refreshPixels(unsigned long currentMillis) {

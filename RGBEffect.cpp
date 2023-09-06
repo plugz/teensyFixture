@@ -1,6 +1,8 @@
 #include "RGBEffect.hpp"
 #include "simplexnoise1234.h"
 
+#include "Log.hpp"
+
 #include <cstring>
 #include <algorithm>
 #include <cmath>
@@ -681,8 +683,8 @@ void RGBEffect::beginStrobe()
 void RGBEffect::refreshPixelsStrobe()
 {
     Color rgb{0,0,0};
-    // 40ms flashes
-    if (_prevUpdateMillis % _desc.loopTime < 40) {
+    // 20ms flashes
+    if (_prevUpdateMillis % _desc.loopTime < 20) {
         rgb = getTimeGradientColor();
     }
     for (unsigned int i = 0; i < _pixelCount; ++i) {
